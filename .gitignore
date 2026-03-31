@@ -1,0 +1,18 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# Node
+node_modules/
+.next/
+*.log
+
+# Mac
+.DS_Store
+
+# Data (keep templates, exclude user data)
+backend/data/leads.json
+backend/data/unmapped_flows.json
