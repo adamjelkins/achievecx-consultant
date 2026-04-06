@@ -2,29 +2,37 @@
 core/session_store.py
 
 Session persistence layer.
-Dev mode: in-memory dict.
-Production: Supabase (postgres).
-
-All business logic functions receive session as a plain dict.
-This module handles load/save around those calls.
+Dev mode: JSON files on disk (shared across processes).
+Production: Supabase.
 """
 
 from __future__ import annotations
 import json
+import os
+from pathlib import Path
 from typing import Optional
 from models.session import SessionState
 from core.config import settings
 
-# ── In-memory store (dev / fallback) ──
-_memory_store: dict[str, dict] = {}
+# Dev: store sessions as JSON files in a temp directory
+_DEV_STORE_DIR = Path(__file__).parent.parent / ".sessions"
+
+
+def _dev_path(session_id: str) -> Path:
+    _DEV_STORE_DIR.mkdir(exist_ok=True)
+    return _DEV_STORE_DIR / f"{session_id}.json"
 
 
 async def get_session(session_id: str) -> Optional[SessionState]:
     """Load session by ID. Returns None if not found."""
-    if settings.app_env == "development" or not settings.supabase_url:
-        data = _memory_store.get(session_id)
-        if data:
-            return SessionState(**data)
+    if settings.app_env != "production" or not settings.supabase_url:
+        path = _dev_path(session_id)
+        if path.exists():
+            try:
+                data = json.loads(path.read_text())
+                return SessionState(**data)
+            except Exception as e:
+                print(f"[session_store] Read failed: {e}")
         return None
 
     try:
@@ -37,7 +45,7 @@ async def get_session(session_id: str) -> Optional[SessionState]:
                 state_data = json.loads(state_data)
             return SessionState(**state_data)
     except Exception as e:
-        print(f"[session_store] get failed: {e}")
+        print(f"[session_store] Supabase get failed: {e}")
 
     return None
 
@@ -46,24 +54,32 @@ async def save_session(session: SessionState) -> bool:
     """Persist session. Returns True on success."""
     session.touch()
 
-    if settings.app_env == "development" or not settings.supabase_url:
-        _memory_store[session.session_id] = session.model_dump()
-        return True
+    if settings.app_env != "production" or not settings.supabase_url:
+        try:
+            path = _dev_path(session.session_id)
+            path.write_text(session.model_dump_json())
+            return True
+        except Exception as e:
+            print(f"[session_store] Write failed: {e}")
+            return False
 
     try:
         from supabase import create_client
         sb = create_client(settings.supabase_url, settings.supabase_service_key)
         payload = {
             "session_id": session.session_id,
-            "state": session.model_dump_json(),
+            "state":      session.model_dump_json(),
             "updated_at": session.updated_at,
         }
         sb.table("sessions").upsert(payload).execute()
         return True
     except Exception as e:
-        print(f"[session_store] save failed: {e}")
-        # Fall back to memory
-        _memory_store[session.session_id] = session.model_dump()
+        print(f"[session_store] Supabase save failed: {e}")
+        # Fall back to file
+        try:
+            _dev_path(session.session_id).write_text(session.model_dump_json())
+        except Exception:
+            pass
         return False
 
 

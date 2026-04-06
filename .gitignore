@@ -16,3 +16,4 @@ node_modules/
 # Data (keep templates, exclude user data)
 backend/data/leads.json
 backend/data/unmapped_flows.json
+.sessions/

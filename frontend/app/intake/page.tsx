@@ -12,7 +12,14 @@ export default function IntakePage() {
   const { setSession, setBusinessProfile, setDiscovery, setSessionId } = useSessionStore()
 
   const [loading, setLoading] = useState(false)
+  const [loadingStep, setLoadingStep] = useState(0)
   const [error, setError] = useState('')
+
+  const LOADING_STEPS = [
+    { label: 'Identifying business',    sub: 'Researching domain...' },
+    { label: 'Mapping industry & type', sub: 'Analyzing business context...' },
+    { label: 'Pre-loading CX flows',    sub: 'Matching interaction patterns...' },
+  ]
 
   const [form, setForm] = useState({
     first_name: '',
@@ -36,15 +43,21 @@ export default function IntakePage() {
     }
 
     setLoading(true)
+    setLoadingStep(0)
     setError('')
 
     try {
-      // Create session first
+      // Create session
       const session = await Sessions.create()
       setSession(session)
       setSessionId(session.session_id)
 
-      // Run inference
+      // Step 1 — identifying business
+      setLoadingStep(1)
+      await new Promise(r => setTimeout(r, 600))
+
+      // Step 2 — run inference (this is the slow one)
+      setLoadingStep(2)
       const result = await Inference.run({
         session_id: session.session_id,
         email: form.email,
@@ -54,10 +67,13 @@ export default function IntakePage() {
         phone: form.phone,
       })
 
+      // Step 3 — pre-loading flows
+      setLoadingStep(3)
+      await new Promise(r => setTimeout(r, 400))
+
       setBusinessProfile(result.business_profile)
       setDiscovery(result.suggested_flows)
 
-      // Go to Phase 2
       router.push('/phase/2')
 
     } catch (e: any) {
@@ -183,6 +199,7 @@ export default function IntakePage() {
             )}
 
             {/* Submit */}
+            {!loading ? (
             <button
               onClick={handleSubmit}
               disabled={loading}
@@ -192,15 +209,42 @@ export default function IntakePage() {
                          disabled:cursor-not-allowed flex items-center
                          justify-center gap-2"
             >
-              {loading ? (
-                <>
-                  <Loader2 size={14} className="animate-spin" />
-                  Researching company...
-                </>
-              ) : (
-                'Begin Session →'
-              )}
+              Begin Session →
             </button>
+            ) : (
+              <div className="mt-4 space-y-3">
+                {LOADING_STEPS.map((step, i) => {
+                  const done   = loadingStep > i + 1
+                  const active = loadingStep === i + 1
+                  return (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+                        {done ? (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="8" fill="#4ade80" opacity="0.2"/>
+                            <path d="M5 8l2 2 4-4" stroke="#4ade80" strokeWidth="1.5" strokeLinecap="round"/>
+                          </svg>
+                        ) : active ? (
+                          <Loader2 size={14} className="animate-spin text-accent" />
+                        ) : (
+                          <div className="w-3 h-3 rounded-full border border-border" />
+                        )}
+                      </div>
+                      <div>
+                        <div className={`text-sm font-medium transition-colors ${
+                          done ? 'text-success' : active ? 'text-text-primary' : 'text-text-faint'
+                        }`}>
+                          {step.label}
+                        </div>
+                        {active && (
+                          <div className="text-xs text-text-dim mt-0.5">{step.sub}</div>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </div>
 

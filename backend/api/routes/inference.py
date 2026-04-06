@@ -53,17 +53,28 @@ async def run_inference(req: IntakeRequest):
         # We pass session as a dict to avoid st.session_state dependency
         import sys
         from pathlib import Path
-        sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
+        sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
         from business_inferencer import run_full_inference
         result = run_full_inference(req.email)
 
-        # Override company name if provided in intake
-        if req.company_name and result.get("business_profile"):
-            result["business_profile"]["company_name"] = req.company_name
+        # run_full_inference returns the business_profile dict directly
+        # with pre_suggested_flows embedded inside it
+        business_profile = result if isinstance(result, dict) else {}
+        pre_flows_raw = business_profile.pop("pre_suggested_flows", [])
+        # Mark all inferred flows as confirmed by default so they show
+        # immediately in the diagram before the conversation starts
+        pre_flows = [
+            {**f, "confirmed": True}
+            for f in pre_flows_raw
+        ]
 
-        session.business_profile   = result.get("business_profile", {})
-        session.discovery          = result.get("suggested_flows", [])
+        # Override company name if provided in intake
+        if req.company_name:
+            business_profile["company_name"] = req.company_name
+
+        session.business_profile   = business_profile
+        session.discovery          = pre_flows
         session.inference_seeded   = True
         session.phase_1_complete   = True
         session.current_phase      = 2
