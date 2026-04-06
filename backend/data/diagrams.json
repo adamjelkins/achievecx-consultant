@@ -1,0 +1,666 @@
+{
+  "flow_001": {
+    "nodes": [
+      {
+        "step_name": "Customer Entry",
+        "channel": "Voice/Chat",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "IVR/IVA"
+        ],
+        "kpis": [
+          "Containment Rate"
+        ]
+      },
+      {
+        "step_name": "Self-Service",
+        "channel": "Voice/Chat",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Knowledge Base Lookup"
+        ],
+        "kpis": [
+          "FCR"
+        ]
+      },
+      {
+        "step_name": "Agent Escalation",
+        "channel": "Voice/Chat",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "AHT"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Customer Entry",
+        "to": "Self-Service"
+      },
+      {
+        "from": "Self-Service",
+        "to": "Agent Escalation",
+        "condition": "Unresolved"
+      }
+    ],
+    "mermaid_code": "graph TD\nCustomer_Entry[\"Customer Entry\\nVoice/Chat\\nAI-assisted\"] --> Self_Service[\"Self-Service\\nVoice/Chat\\nAI-assisted\"]\nSelf_Service -->|Unresolved| Agent_Escalation[\"Agent Escalation\\nVoice/Chat\\nManual\"]"
+  },
+  "flow_002": {
+    "nodes": [
+      {
+        "step_name": "Notification Trigger",
+        "channel": "Multichannel",
+        "automation": "Automated",
+        "ai_features": [],
+        "kpis": [
+          "Delivery Rate"
+        ]
+      },
+      {
+        "step_name": "Send Notification",
+        "channel": "Email/SMS/Voice",
+        "automation": "Automated",
+        "ai_features": [],
+        "kpis": [
+          "Open Rate"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Notification Trigger",
+        "to": "Send Notification"
+      }
+    ],
+    "mermaid_code": "graph TD\nNotification_Trigger[\"Notification Trigger\\nMultichannel\\nAutomated\"] --> Send_Notification[\"Send Notification\\nEmail/SMS/Voice\\nAutomated\"]"
+  },
+  "flow_003": {
+    "nodes": [
+      {
+        "step_name": "Billing Inquiry",
+        "channel": "Web/Chat/Phone",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Balance Inquiry"
+        ],
+        "kpis": [
+          "FCR"
+        ]
+      },
+      {
+        "step_name": "Payment Processing",
+        "channel": "Web/Phone",
+        "automation": "Automated",
+        "ai_features": [
+          "Secure Payment"
+        ],
+        "kpis": [
+          "Success Rate"
+        ]
+      },
+      {
+        "step_name": "Escalation to Agent",
+        "channel": "Phone/Chat",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "AHT"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Billing Inquiry",
+        "to": "Payment Processing"
+      },
+      {
+        "from": "Billing Inquiry",
+        "to": "Escalation to Agent",
+        "condition": "Issue Unresolved"
+      }
+    ],
+    "mermaid_code": "graph TD\nBilling_Inquiry[\"Billing Inquiry\\nWeb/Chat/Phone\\nAI-assisted\"] --> Payment_Processing[\"Payment Processing\\nWeb/Phone\\nAutomated\"]\nBilling_Inquiry --> Escalation_to_Agent[\"Escalation to Agent\\nPhone/Chat\\nManual\\n(Issue Unresolved)\"]"
+  },
+  "flow_004": {
+    "nodes": [
+      {
+        "step_name": "Appointment Request",
+        "channel": "Web/Chat/Phone",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Calendar Check"
+        ],
+        "kpis": [
+          "Booking Success Rate"
+        ]
+      },
+      {
+        "step_name": "Confirmation & Reminder",
+        "channel": "Email/SMS",
+        "automation": "Automated",
+        "ai_features": [],
+        "kpis": [
+          "Reminder Open Rate"
+        ]
+      },
+      {
+        "step_name": "Rescheduling/Cancellation",
+        "channel": "Web/Chat/Phone",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "AHT"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Appointment Request",
+        "to": "Confirmation & Reminder"
+      },
+      {
+        "from": "Appointment Request",
+        "to": "Rescheduling/Cancellation",
+        "condition": "Change Requested"
+      }
+    ],
+    "mermaid_code": "graph TD\nAppointment_Request[\"Appointment Request\\nWeb/Chat/Phone\\nAI-assisted\"] --> Confirmation_Reminder[\"Confirmation & Reminder\\nEmail/SMS\\nAutomated\"]\nAppointment_Request --> Rescheduling_Cancellation[\"Rescheduling/Cancellation\\nWeb/Chat/Phone\\nManual\\n(Change Requested)\"]"
+  },
+  "flow_005": {
+    "nodes": [
+      {
+        "step_name": "Tech Issue Reported",
+        "channel": "Chat/Phone",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Troubleshooting Suggestions"
+        ],
+        "kpis": [
+          "FCR"
+        ]
+      },
+      {
+        "step_name": "Remote Troubleshooting",
+        "channel": "Phone/Remote",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Device Diagnostics"
+        ],
+        "kpis": [
+          "Resolution Rate"
+        ]
+      },
+      {
+        "step_name": "Agent Escalation",
+        "channel": "Phone/Chat",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "AHT"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Tech Issue Reported",
+        "to": "Remote Troubleshooting"
+      },
+      {
+        "from": "Remote Troubleshooting",
+        "to": "Agent Escalation",
+        "condition": "Issue Unresolved"
+      }
+    ],
+    "mermaid_code": "graph TD\nTech_Issue_Reported[\"Tech Issue Reported\\nChat/Phone\\nAI-assisted\"] --> Remote_Troubleshooting[\"Remote Troubleshooting\\nPhone/Remote\\nAI-assisted\"]\nRemote_Troubleshooting --> Agent_Escalation[\"Agent Escalation\\nPhone/Chat\\nManual\\n(Issue Unresolved)\"]"
+  },
+  "flow_006": {
+    "nodes": [
+      {
+        "step_name": "Account Creation/Update",
+        "channel": "Web/Chat",
+        "automation": "Automated",
+        "ai_features": [
+          "Identity Verification"
+        ],
+        "kpis": [
+          "Completion Rate"
+        ]
+      },
+      {
+        "step_name": "Password Reset",
+        "channel": "Web/Chat",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Security Questions"
+        ],
+        "kpis": [
+          "Reset Success Rate"
+        ]
+      },
+      {
+        "step_name": "Agent Assistance",
+        "channel": "Chat/Phone",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "AHT"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Account Creation/Update",
+        "to": "Password Reset"
+      },
+      {
+        "from": "Password Reset",
+        "to": "Agent Assistance",
+        "condition": "Unresolved"
+      }
+    ],
+    "mermaid_code": "graph TD\nAccount_Creation_Update[\"Account Creation/Update\\nWeb/Chat\\nAutomated\"] --> Password_Reset[\"Password Reset\\nWeb/Chat\\nAI-assisted\"]\nPassword_Reset --> Agent_Assistance[\"Agent Assistance\\nChat/Phone\\nManual\\n(Unresolved)\"]"
+  },
+  "flow_007": {
+    "nodes": [
+      {
+        "step_name": "Order Placed",
+        "channel": "Web/Phone",
+        "automation": "Automated",
+        "ai_features": [
+          "Order Tracking Integration"
+        ],
+        "kpis": [
+          "Fulfillment Rate"
+        ]
+      },
+      {
+        "step_name": "Shipment Notifications",
+        "channel": "Email/SMS",
+        "automation": "Automated",
+        "ai_features": [],
+        "kpis": [
+          "Open Rate"
+        ]
+      },
+      {
+        "step_name": "Returns/Exchanges",
+        "channel": "Web/Phone",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "AHT"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Order Placed",
+        "to": "Shipment Notifications"
+      },
+      {
+        "from": "Order Placed",
+        "to": "Returns/Exchanges",
+        "condition": "Return Requested"
+      }
+    ],
+    "mermaid_code": "graph TD\nOrder_Placed[\"Order Placed\\nWeb/Phone\\nAutomated\"] --> Shipment_Notifications[\"Shipment Notifications\\nEmail/SMS\\nAutomated\"]\nOrder_Placed --> Returns_Exchanges[\"Returns/Exchanges\\nWeb/Phone\\nManual\\n(Return Requested)\"]"
+  },
+  "flow_008": {
+    "nodes": [
+      {
+        "step_name": "Patient Inquiry",
+        "channel": "Phone/Chat/Web",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Appointment Scheduling"
+        ],
+        "kpis": [
+          "FCR"
+        ]
+      },
+      {
+        "step_name": "Prescription Refill",
+        "channel": "Web/Chat",
+        "automation": "Automated",
+        "ai_features": [
+          "Verification"
+        ],
+        "kpis": [
+          "Completion Rate"
+        ]
+      },
+      {
+        "step_name": "Insurance Verification",
+        "channel": "Web/Phone",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Claim Check"
+        ],
+        "kpis": [
+          "Accuracy"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Patient Inquiry",
+        "to": "Prescription Refill"
+      },
+      {
+        "from": "Patient Inquiry",
+        "to": "Insurance Verification",
+        "condition": "Insurance Question"
+      }
+    ],
+    "mermaid_code": "graph TD\nPatient_Inquiry[\"Patient Inquiry\\nPhone/Chat/Web\\nAI-assisted\"] --> Prescription_Refill[\"Prescription Refill\\nWeb/Chat\\nAutomated\"]\nPatient_Inquiry --> Insurance_Verification[\"Insurance Verification\\nWeb/Phone\\nAI-assisted\\n(Insurance Question)\"]"
+  },
+  "flow_009": {
+    "nodes": [
+      {
+        "step_name": "Customer Inquiry",
+        "channel": "Phone/Chat/Web",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Transaction Lookup"
+        ],
+        "kpis": [
+          "FCR"
+        ]
+      },
+      {
+        "step_name": "Loan/Account Assistance",
+        "channel": "Web/Phone",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "AHT"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Customer Inquiry",
+        "to": "Loan/Account Assistance"
+      }
+    ],
+    "mermaid_code": "graph TD\nCustomer_Inquiry[\"Customer Inquiry\\nPhone/Chat/Web\\nAI-assisted\"] --> Loan_Account_Assistance[\"Loan/Account Assistance\\nWeb/Phone\\nManual\"]"
+  },
+  "flow_010": {
+    "nodes": [
+      {
+        "step_name": "Lead Capture",
+        "channel": "Web/Chat",
+        "automation": "Automated",
+        "ai_features": [
+          "CRM Integration"
+        ],
+        "kpis": [
+          "Conversion Rate"
+        ]
+      },
+      {
+        "step_name": "Quote/Appointment",
+        "channel": "Web/Phone",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "Response Time"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Lead Capture",
+        "to": "Quote/Appointment"
+      }
+    ],
+    "mermaid_code": "graph TD\nLead_Capture[\"Lead Capture\\nWeb/Chat\\nAutomated\"] --> Quote_Appointment[\"Quote/Appointment\\nWeb/Phone\\nManual\"]"
+  },
+  "flow_011": {
+    "nodes": [
+      {
+        "step_name": "Identity Verification",
+        "channel": "Web/Chat",
+        "automation": "Automated",
+        "ai_features": [
+          "MFA"
+        ],
+        "kpis": [
+          "Success Rate"
+        ]
+      },
+      {
+        "step_name": "Password Reset",
+        "channel": "Web/Chat",
+        "automation": "Automated",
+        "ai_features": [
+          "Security Questions"
+        ],
+        "kpis": [
+          "Reset Success Rate"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Identity Verification",
+        "to": "Password Reset"
+      }
+    ],
+    "mermaid_code": "graph TD\nIdentity_Verification[\"Identity Verification\\nWeb/Chat\\nAutomated\"] --> Password_Reset[\"Password Reset\\nWeb/Chat\\nAutomated\"]"
+  },
+  "flow_012": {
+    "nodes": [
+      {
+        "step_name": "Order Inquiry",
+        "channel": "Web/Chat/Phone",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Order Lookup"
+        ],
+        "kpis": [
+          "FCR"
+        ]
+      },
+      {
+        "step_name": "Customer Response",
+        "channel": "Web/Chat/Phone",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "AHT"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Order Inquiry",
+        "to": "Customer Response"
+      }
+    ],
+    "mermaid_code": "graph TD\nOrder_Inquiry[\"Order Inquiry\\nWeb/Chat/Phone\\nAI-assisted\"] --> Customer_Response[\"Customer Response\\nWeb/Chat/Phone\\nManual\"]"
+  },
+  "flow_013": {
+    "nodes": [
+      {
+        "step_name": "Return Initiated",
+        "channel": "Web/Chat/Phone",
+        "automation": "Automated",
+        "ai_features": [
+          "Return Instructions"
+        ],
+        "kpis": [
+          "Completion Rate"
+        ]
+      },
+      {
+        "step_name": "Refund/Exchange Processing",
+        "channel": "Web/Phone",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "AHT"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Return Initiated",
+        "to": "Refund/Exchange Processing"
+      }
+    ],
+    "mermaid_code": "graph TD\nReturn_Initiated[\"Return Initiated\\nWeb/Chat/Phone\\nAutomated\"] --> Refund_Exchange_Processing[\"Refund/Exchange Processing\\nWeb/Phone\\nManual\"]"
+  },
+  "flow_014": {
+    "nodes": [
+      {
+        "step_name": "Order Status Trigger",
+        "channel": "Email/SMS",
+        "automation": "Automated",
+        "ai_features": [],
+        "kpis": [
+          "Open Rate"
+        ]
+      },
+      {
+        "step_name": "Send Update",
+        "channel": "Email/SMS",
+        "automation": "Automated",
+        "ai_features": [],
+        "kpis": [
+          "Open Rate"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Order Status Trigger",
+        "to": "Send Update"
+      }
+    ],
+    "mermaid_code": "graph TD\nOrder_Status_Trigger[\"Order Status Trigger\\nEmail/SMS\\nAutomated\"] --> Send_Update[\"Send Update\\nEmail/SMS\\nAutomated\"]"
+  },
+  "flow_015": {
+    "nodes": [
+      {
+        "step_name": "Marketing Trigger",
+        "channel": "Email/SMS",
+        "automation": "Automated",
+        "ai_features": [],
+        "kpis": [
+          "Open Rate"
+        ]
+      },
+      {
+        "step_name": "Send Promo",
+        "channel": "Email/SMS",
+        "automation": "Automated",
+        "ai_features": [],
+        "kpis": [
+          "Click Rate"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Marketing Trigger",
+        "to": "Send Promo"
+      }
+    ],
+    "mermaid_code": "graph TD\nMarketing_Trigger[\"Marketing Trigger\\nEmail/SMS\\nAutomated\"] --> Send_Promo[\"Send Promo\\nEmail/SMS\\nAutomated\"]"
+  },
+  "flow_016": {
+    "nodes": [
+      {
+        "step_name": "Billing Inquiry",
+        "channel": "Web/Phone/Chat",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Dispute Handling"
+        ],
+        "kpis": [
+          "FCR"
+        ]
+      },
+      {
+        "step_name": "Agent Assistance",
+        "channel": "Phone/Chat",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "AHT"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Billing Inquiry",
+        "to": "Agent Assistance"
+      }
+    ],
+    "mermaid_code": "graph TD\nBilling_Inquiry[\"Billing Inquiry\\nWeb/Phone/Chat\\nAI-assisted\"] --> Agent_Assistance[\"Agent Assistance\\nPhone/Chat\\nManual\"]"
+  },
+  "flow_017": {
+    "nodes": [
+      {
+        "step_name": "Refund Request",
+        "channel": "Web/Phone/Chat",
+        "automation": "Automated",
+        "ai_features": [
+          "Refund Processing"
+        ],
+        "kpis": [
+          "Completion Rate"
+        ]
+      },
+      {
+        "step_name": "Accounting Reconciliation",
+        "channel": "Internal",
+        "automation": "Manual",
+        "ai_features": [],
+        "kpis": [
+          "Accuracy"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Refund Request",
+        "to": "Accounting Reconciliation"
+      }
+    ],
+    "mermaid_code": "graph TD\nRefund_Request[\"Refund Request\\nWeb/Phone/Chat\\nAutomated\"] --> Accounting_Reconciliation[\"Accounting Reconciliation\\nInternal\\nManual\"]"
+  },
+  "flow_018": {
+    "nodes": [
+      {
+        "step_name": "Loyalty Points Inquiry",
+        "channel": "Web/Chat",
+        "automation": "AI-assisted",
+        "ai_features": [
+          "Redemption Automation"
+        ],
+        "kpis": [
+          "FCR"
+        ]
+      },
+      {
+        "step_name": "Notification",
+        "channel": "Email/SMS",
+        "automation": "Automated",
+        "ai_features": [],
+        "kpis": [
+          "Open Rate"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "Loyalty Points Inquiry",
+        "to": "Notification"
+      }
+    ],
+    "mermaid_code": "graph TD\nLoyalty_Points_Inquiry[\"Loyalty Points Inquiry\\nWeb/Chat\\nAI-assisted\"] --> Notification[\"Notification\\nEmail/SMS\\nAutomated\"]"
+  }
+}

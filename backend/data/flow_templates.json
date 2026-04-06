@@ -1,0 +1,618 @@
+{
+  "flow_001": {
+    "flow_id": "flow_001",
+    "flow_name": "Order Status Inquiry",
+    "category": "Order Management",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Chat",
+      "SMS",
+      "Mobile App"
+    ],
+    "intents": [
+      "Track order location",
+      "Get delivery ETA",
+      "Report order exception or delay",
+      "Cancel or modify order"
+    ],
+    "data_sources": [
+      "OMS",
+      "CRM"
+    ],
+    "human_role": "Escalation",
+    "human_role_detail": "Agent handles exceptions, disputes, and orders in unusual states. AI contains routine status and ETA inquiries.",
+    "output_actions": [
+      "Inform",
+      "Escalate"
+    ],
+    "authentication": "None for tracking; PIN or order number for account changes",
+    "containment_target": 85,
+    "containment_type": "standard",
+    "complexity": "Low",
+    "notes": ""
+  },
+  "flow_002": {
+    "flow_id": "flow_002",
+    "flow_name": "Return & Refund Processing",
+    "category": "Order Management",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Chat",
+      "Email"
+    ],
+    "intents": [
+      "Initiate a return",
+      "Check return status",
+      "Inquire about refund timeline",
+      "Request return label"
+    ],
+    "data_sources": [
+      "OMS",
+      "CRM",
+      "Returns Management System"
+    ],
+    "human_role": "In-Loop",
+    "human_role_detail": "Human approves refunds above a defined threshold. AI handles standard return initiations and status checks end-to-end.",
+    "output_actions": [
+      "Transact",
+      "Inform",
+      "Escalate"
+    ],
+    "authentication": "PIN or order number",
+    "containment_target": 70,
+    "containment_type": "standard",
+    "complexity": "Medium",
+    "notes": "Threshold for human approval should be configured per client policy."
+  },
+  "flow_003": {
+    "flow_id": "flow_003",
+    "flow_name": "Billing Inquiry",
+    "category": "Billing",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Chat",
+      "Email"
+    ],
+    "intents": [
+      "Check balance or amount due",
+      "Review payment history",
+      "Dispute a charge",
+      "Understand a bill line item"
+    ],
+    "data_sources": [
+      "Billing System",
+      "CRM",
+      "ERP"
+    ],
+    "human_role": "Escalation",
+    "human_role_detail": "AI handles balance, history, and explanation inquiries. Disputes and adjustments route to an agent.",
+    "output_actions": [
+      "Inform",
+      "Transact",
+      "Escalate"
+    ],
+    "authentication": "PIN or knowledge-based verification",
+    "containment_target": 75,
+    "containment_type": "standard",
+    "complexity": "Medium",
+    "notes": ""
+  },
+  "flow_004": {
+    "flow_id": "flow_004",
+    "flow_name": "Technical Support (Tier 1)",
+    "category": "Technical Support",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Chat",
+      "Email"
+    ],
+    "intents": [
+      "Troubleshoot device or service issue",
+      "Reset credentials or access",
+      "Look up known issue status",
+      "Walk through self-service fix"
+    ],
+    "data_sources": [
+      "Knowledge Base",
+      "CRM",
+      "ITSM"
+    ],
+    "human_role": "Escalation",
+    "human_role_detail": "AI works through a diagnostic path. After a defined number of failed resolution attempts, the interaction escalates to a Tier 2 agent with full context.",
+    "output_actions": [
+      "Inform",
+      "Route",
+      "Escalate"
+    ],
+    "authentication": "None for public knowledge base; PIN for account-specific diagnostics",
+    "containment_target": 55,
+    "containment_type": "standard",
+    "complexity": "Medium",
+    "notes": "Containment target is lower due to breadth of technical scenarios. Strong candidate for improvement as KB is enriched."
+  },
+  "flow_005": {
+    "flow_id": "flow_005",
+    "flow_name": "Account Management",
+    "category": "Account Services",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Mobile App",
+      "Chat"
+    ],
+    "intents": [
+      "Update contact information",
+      "Reset password or PIN",
+      "Manage notification preferences",
+      "Request account closure"
+    ],
+    "data_sources": [
+      "CRM",
+      "Identity Provider (IdP)"
+    ],
+    "human_role": "In-Loop",
+    "human_role_detail": "Sensitive changes (account closure, beneficiary updates) require human confirmation. Routine updates are fully automated.",
+    "output_actions": [
+      "Transact",
+      "Inform"
+    ],
+    "authentication": "MFA required for sensitive changes; PIN for routine updates",
+    "containment_target": 80,
+    "containment_type": "standard",
+    "complexity": "Low",
+    "notes": ""
+  },
+  "flow_006": {
+    "flow_id": "flow_006",
+    "flow_name": "Appointment Scheduling",
+    "category": "Scheduling",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Chat",
+      "SMS",
+      "Mobile App"
+    ],
+    "intents": [
+      "Book a new appointment",
+      "Reschedule existing appointment",
+      "Cancel appointment",
+      "Confirm appointment details"
+    ],
+    "data_sources": [
+      "Scheduling System",
+      "CRM",
+      "Calendar / Resource System"
+    ],
+    "human_role": "None",
+    "human_role_detail": "Fully automated for standard scheduling. Complex multi-resource or specialist bookings may trigger post-review.",
+    "output_actions": [
+      "Schedule",
+      "Inform",
+      "Transact"
+    ],
+    "authentication": "None for new bookings; PIN for existing patient or customer",
+    "containment_target": 90,
+    "containment_type": "standard",
+    "complexity": "Low",
+    "notes": "One of the strongest quick win candidates across industries."
+  },
+  "flow_007": {
+    "flow_id": "flow_007",
+    "flow_name": "Identity Verification",
+    "category": "Authentication & Security",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Mobile App",
+      "Chat"
+    ],
+    "intents": [
+      "Verify customer identity",
+      "Reset credentials after failed verification",
+      "Unlock a suspended account",
+      "Step-up authentication for sensitive action"
+    ],
+    "data_sources": [
+      "Identity Provider",
+      "CRM",
+      "Fraud & Risk Engine"
+    ],
+    "human_role": "In-Loop",
+    "human_role_detail": "Failed verification attempts and fraud signals always route to a human agent. AI handles standard verification flows end-to-end.",
+    "output_actions": [
+      "Transact",
+      "Route",
+      "Escalate"
+    ],
+    "authentication": "MFA, biometric, or knowledge-based depending on channel and risk level",
+    "containment_target": 65,
+    "containment_type": "standard",
+    "complexity": "High",
+    "notes": "Compliance and fraud risk require careful threshold configuration. Lower containment reflects intentional human oversight."
+  },
+  "flow_008": {
+    "flow_id": "flow_008",
+    "flow_name": "Outbound Notifications",
+    "category": "Proactive Communications",
+    "entry_channels": [
+      "SMS",
+      "Email",
+      "Automated Phone Call",
+      "App Push"
+    ],
+    "intents": [
+      "Appointment reminder",
+      "Payment due reminder",
+      "Delivery status update",
+      "Service alert or outage notice"
+    ],
+    "data_sources": [
+      "OMS",
+      "CRM",
+      "Scheduling System",
+      "Billing System"
+    ],
+    "human_role": "None",
+    "human_role_detail": "Fully automated outbound. No human in loop unless customer replies and initiates an inbound interaction.",
+    "output_actions": [
+      "Inform"
+    ],
+    "authentication": "None — outbound initiated by system",
+    "containment_target": 98,
+    "containment_type": "standard",
+    "complexity": "Low",
+    "notes": "Highest containment target in catalog. Primary value is volume deflection — customers who receive proactive updates generate fewer inbound inquiries."
+  },
+  "flow_009": {
+    "flow_id": "flow_009",
+    "flow_name": "Product & Service Information",
+    "category": "Sales Support",
+    "entry_channels": [
+      "Web",
+      "Chat",
+      "Phone",
+      "SMS"
+    ],
+    "intents": [
+      "Get product specifications",
+      "Inquire about pricing",
+      "Check availability",
+      "Compare product options"
+    ],
+    "data_sources": [
+      "Product Catalog",
+      "CRM",
+      "Knowledge Base"
+    ],
+    "human_role": "Escalation",
+    "human_role_detail": "AI handles informational queries. Complex sales conversations or high-value prospects route to a sales agent.",
+    "output_actions": [
+      "Inform",
+      "Route"
+    ],
+    "authentication": "None",
+    "containment_target": 80,
+    "containment_type": "standard",
+    "complexity": "Low",
+    "notes": ""
+  },
+  "flow_010": {
+    "flow_id": "flow_010",
+    "flow_name": "Complaint & Escalation Handling",
+    "category": "Customer Care",
+    "entry_channels": [
+      "Phone",
+      "Email",
+      "Chat",
+      "Social Media"
+    ],
+    "intents": [
+      "Lodge a formal complaint",
+      "Request supervisor or manager",
+      "Escalate an unresolved issue",
+      "Express dissatisfaction"
+    ],
+    "data_sources": [
+      "CRM",
+      "Case Management System",
+      "Quality System"
+    ],
+    "human_role": "Collaborative",
+    "human_role_detail": "AI captures complaint details, categorizes severity, and routes with full context. Human agent resolves. AI does not attempt to contain — it accelerates human response quality.",
+    "output_actions": [
+      "Route",
+      "Escalate",
+      "Inform"
+    ],
+    "authentication": "PIN or account lookup",
+    "containment_target": 30,
+    "containment_type": "ai_assisted",
+    "complexity": "High",
+    "notes": "Low containment is intentional. AI value here is triage speed and context capture, not deflection. Display as 'AI-Assisted' rather than containment metric."
+  },
+  "flow_011": {
+    "flow_id": "flow_011",
+    "flow_name": "Payment Processing",
+    "category": "Billing",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Mobile App",
+      "IVR"
+    ],
+    "intents": [
+      "Make a one-time payment",
+      "Set up autopay",
+      "Inquire about payment plan options",
+      "Confirm payment received"
+    ],
+    "data_sources": [
+      "Payment Gateway",
+      "Billing System",
+      "CRM"
+    ],
+    "human_role": "In-Loop",
+    "human_role_detail": "Payment plan negotiations and hardship arrangements require human approval. Standard payments are fully automated. Fraud flags trigger immediate human review.",
+    "output_actions": [
+      "Transact",
+      "Inform",
+      "Escalate"
+    ],
+    "authentication": "PIN and PCI-compliant authentication",
+    "containment_target": 75,
+    "containment_type": "standard",
+    "complexity": "Medium",
+    "notes": "PCI-DSS compliance requirements must be validated before deployment."
+  },
+  "flow_012": {
+    "flow_id": "flow_012",
+    "flow_name": "Onboarding & Welcome",
+    "category": "Customer Lifecycle",
+    "entry_channels": [
+      "Email",
+      "SMS",
+      "Web",
+      "Mobile App",
+      "Phone"
+    ],
+    "intents": [
+      "Complete account setup",
+      "Take a guided product tour",
+      "Get first-use guidance",
+      "Understand available features or services"
+    ],
+    "data_sources": [
+      "CRM",
+      "Product System",
+      "Knowledge Base"
+    ],
+    "human_role": "Escalation",
+    "human_role_detail": "Setup failures or complex configuration questions route to an onboarding specialist. Standard welcome journey is fully automated.",
+    "output_actions": [
+      "Inform",
+      "Schedule",
+      "Route"
+    ],
+    "authentication": "Token-based (email link) for initial setup",
+    "containment_target": 85,
+    "containment_type": "standard",
+    "complexity": "Low",
+    "notes": ""
+  },
+  "flow_013": {
+    "flow_id": "flow_013",
+    "flow_name": "Fraud & Dispute Resolution",
+    "category": "Authentication & Security",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Mobile App"
+    ],
+    "intents": [
+      "Report suspected fraud",
+      "Dispute an unauthorized transaction",
+      "Freeze or suspend account",
+      "Track fraud case status"
+    ],
+    "data_sources": [
+      "Fraud Detection System",
+      "CRM",
+      "Billing System",
+      "Core Banking"
+    ],
+    "human_role": "In-Loop",
+    "human_role_detail": "AI triages, captures details, and performs initial risk scoring. A human agent always reviews and closes fraud cases. AI never autonomously resolves a fraud claim.",
+    "output_actions": [
+      "Transact",
+      "Escalate",
+      "Inform"
+    ],
+    "authentication": "MFA and biometric verification",
+    "containment_target": 40,
+    "containment_type": "ai_assisted",
+    "complexity": "High",
+    "notes": "AI value is triage speed and evidence capture, not containment. Regulatory requirements in most jurisdictions require human resolution of fraud claims."
+  },
+  "flow_014": {
+    "flow_id": "flow_014",
+    "flow_name": "Warranty & Repair",
+    "category": "Field Service",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Chat",
+      "Email"
+    ],
+    "intents": [
+      "Check warranty status and coverage",
+      "File a warranty claim",
+      "Schedule a repair",
+      "Get repair status update"
+    ],
+    "data_sources": [
+      "Warranty System",
+      "CRM",
+      "OMS",
+      "Field Service System"
+    ],
+    "human_role": "Post-Review",
+    "human_role_detail": "AI handles status checks and schedules routine service appointments. Claim approvals above a defined value threshold are reviewed by a human before confirmation.",
+    "output_actions": [
+      "Inform",
+      "Schedule",
+      "Transact",
+      "Escalate"
+    ],
+    "authentication": "Serial number and proof of purchase",
+    "containment_target": 65,
+    "containment_type": "standard",
+    "complexity": "Medium",
+    "notes": ""
+  },
+  "flow_015": {
+    "flow_id": "flow_015",
+    "flow_name": "Subscription Management",
+    "category": "Customer Lifecycle",
+    "entry_channels": [
+      "Web",
+      "Mobile App",
+      "Phone",
+      "Chat"
+    ],
+    "intents": [
+      "Upgrade subscription plan",
+      "Downgrade or change plan",
+      "Cancel subscription",
+      "Pause or temporarily suspend"
+    ],
+    "data_sources": [
+      "Subscription Management System",
+      "CRM",
+      "Billing System"
+    ],
+    "human_role": "Escalation",
+    "human_role_detail": "Cancellation intent triggers an AI-driven save flow before escalating to a retention specialist if the customer persists. Upgrades and downgrades are fully automated.",
+    "output_actions": [
+      "Transact",
+      "Inform",
+      "Escalate"
+    ],
+    "authentication": "Account login or PIN",
+    "containment_target": 80,
+    "containment_type": "standard",
+    "complexity": "Low",
+    "notes": "Save flow on cancellation is a high-value automation. Measure with churn reduction rate, not just containment."
+  },
+  "flow_016": {
+    "flow_id": "flow_016",
+    "flow_name": "Healthcare Patient Services",
+    "category": "Healthcare",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Mobile App",
+      "SMS"
+    ],
+    "intents": [
+      "Request prescription refill",
+      "Access lab results",
+      "Request a referral",
+      "Inquire about benefits and coverage"
+    ],
+    "data_sources": [
+      "EHR",
+      "Pharmacy Benefit Manager (PBM)",
+      "Benefits Engine",
+      "Scheduling System"
+    ],
+    "human_role": "In-Loop",
+    "human_role_detail": "Clinical decisions are always reviewed by a licensed clinician or care coordinator. AI handles administrative tasks (scheduling, benefits lookup) autonomously.",
+    "output_actions": [
+      "Inform",
+      "Schedule",
+      "Route",
+      "Transact"
+    ],
+    "authentication": "MFA with DOB and member ID",
+    "containment_target": 60,
+    "containment_type": "standard",
+    "complexity": "High",
+    "notes": "HIPAA compliance is mandatory. Lower containment reflects intentional clinical oversight requirements, not a technology limitation."
+  },
+  "flow_017": {
+    "flow_id": "flow_017",
+    "flow_name": "Field Service Dispatch",
+    "category": "Field Service",
+    "entry_channels": [
+      "Phone",
+      "Web",
+      "Mobile App"
+    ],
+    "intents": [
+      "Request a service visit",
+      "Check technician ETA",
+      "Reschedule or cancel a visit",
+      "Get post-visit follow-up"
+    ],
+    "data_sources": [
+      "Field Service Management (FSM)",
+      "CRM",
+      "Scheduling System"
+    ],
+    "human_role": "Post-Review",
+    "human_role_detail": "Standard dispatch is fully automated. Complex multi-technician or specialist dispatch decisions are reviewed by a field service coordinator.",
+    "output_actions": [
+      "Schedule",
+      "Inform",
+      "Route"
+    ],
+    "authentication": "Account PIN or address verification",
+    "containment_target": 70,
+    "containment_type": "standard",
+    "complexity": "Medium",
+    "notes": ""
+  },
+  "flow_018": {
+    "flow_id": "flow_018",
+    "flow_name": "Proactive Outreach & Churn Prevention",
+    "category": "Proactive Communications",
+    "entry_channels": [
+      "SMS",
+      "Email",
+      "Automated Phone Call",
+      "App Push"
+    ],
+    "intents": [
+      "Re-engage a lapsed or at-risk customer",
+      "Prevent subscription or contract cancellation",
+      "Deliver renewal or re-activation offer",
+      "Alert customer to usage drop or inactivity"
+    ],
+    "data_sources": [
+      "CRM",
+      "Behavioral Analytics",
+      "Subscription System",
+      "Product Usage Data",
+      "Churn Prediction Model"
+    ],
+    "human_role": "Post-Review",
+    "human_role_detail": "AI monitors signals and initiates outreach autonomously. If the customer responds and wants to speak with someone, the interaction routes to a retention specialist. Outcomes are reviewed by humans periodically.",
+    "output_actions": [
+      "Inform",
+      "Transact",
+      "Route"
+    ],
+    "authentication": "None for outbound; PIN if customer initiates a response",
+    "containment_target": null,
+    "containment_type": "engagement",
+    "engagement_metric": "Re-engagement rate",
+    "engagement_target": "15-25%",
+    "complexity": "Medium",
+    "notes": "Primary KPI is re-engagement rate and churn reduction, not containment. Trigger-based — AI monitors behavioral signals and initiates contact proactively."
+  }
+}

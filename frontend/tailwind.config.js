@@ -21,13 +21,13 @@ module.exports = {
           DEFAULT: '#2a2a2a',
           strong: '#404040',
         },
-        // ── Text ──
+        // ── Text — all AAA contrast on #0d0d0d ──
         text: {
-          primary: '#ffffff',
-          secondary: '#d4d4d8',
-          muted: '#a1a1aa',
-          dim: '#71717a',
-          faint: '#52525b',
+          primary:   '#ffffff',  // 21:1 — headings, key values
+          secondary: '#e8e8e8',  // 16:1 — body text, descriptions
+          muted:     '#c0c0c0',  // 10:1 — labels, captions
+          dim:       '#a0a0a0',  // 7.2:1 — hints, placeholders (AAA minimum)
+          faint:     '#808080',  // 5.1:1 — decorative only, never body text
         },
         // ── Accent (indigo) ──
         accent: {

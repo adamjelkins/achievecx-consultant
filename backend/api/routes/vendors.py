@@ -10,7 +10,12 @@ router = APIRouter()
 def _shim_session_state(session):
     import sys, types
     st_mock = types.ModuleType('streamlit')
-    ns = types.SimpleNamespace()
+    
+    class DictNamespace(dict):
+        def __getattr__(self, k): return self.get(k)
+        def __setattr__(self, k, v): self[k] = v
+
+    ns = DictNamespace()
     ns.discovery        = session.discovery
     ns.conv_answers     = session.conv_answers
     ns.business_profile = session.business_profile

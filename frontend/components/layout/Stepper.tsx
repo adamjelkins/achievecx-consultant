@@ -24,7 +24,7 @@ export default function Stepper() {
   }
 
   return (
-    <div className="flex items-center gap-0 mb-3">
+    <div className="flex items-center gap-0 mb-3 relative">
       {PHASE_ORDER.map((phase, i) => {
         const complete = isComplete(phase)
         const current  = isCurrent(phase)
@@ -57,7 +57,6 @@ export default function Stepper() {
           </div>
         )
       })}
-      <div className="h-px bg-gradient-to-r from-accent/20 via-accent/40 to-accent/20 mt-1 w-full absolute left-0" />
     </div>
   )
 }

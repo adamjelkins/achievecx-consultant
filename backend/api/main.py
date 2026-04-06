@@ -18,6 +18,7 @@ from api.routes import (
     business_case,
     blueprint,
     vendors,
+    debug,
 )
 
 
@@ -54,6 +55,10 @@ app.include_router(risk.router,          prefix="/api/risk",          tags=["Ris
 app.include_router(business_case.router, prefix="/api/business-case", tags=["Business Case"])
 app.include_router(blueprint.router,     prefix="/api/blueprint",     tags=["Blueprint"])
 app.include_router(vendors.router,       prefix="/api/vendors",       tags=["Vendors"])
+
+# Debug routes — dev only
+if settings.app_env != "production":
+    app.include_router(debug.router, prefix="/api/debug", tags=["Debug"])
 
 
 @app.get("/health")

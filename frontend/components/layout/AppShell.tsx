@@ -6,6 +6,7 @@ import { Sessions } from '@/lib/api'
 import Sidebar from '@/components/layout/Sidebar'
 import NavBar from '@/components/layout/NavBar'
 import Stepper from '@/components/layout/Stepper'
+import PhaseContext from '@/components/layout/PhaseContext'
 
 interface AppShellProps {
   children: React.ReactNode
@@ -44,9 +45,12 @@ export default function AppShell({ children }: AppShellProps) {
       <div className="flex-1 flex flex-col overflow-hidden">
 
         {/* Stepper */}
-        <div className="flex-shrink-0 px-6 pt-4 pb-0">
+        <div className="flex-shrink-0 px-6 pt-4 pb-3 border-b border-border">
           <Stepper />
         </div>
+
+        {/* Phase context — what we're doing and why */}
+        <PhaseContext />
 
         {/* Phase content — scrollable */}
         <main className="flex-1 overflow-y-auto px-6 pt-4 pb-24">

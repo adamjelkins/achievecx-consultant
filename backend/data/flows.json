@@ -1,0 +1,713 @@
+[
+  {
+    "flow_id": "flow_001",
+    "flow_name": "Inbound Customer Support",
+    "category": "Support",
+    "keywords": [
+      "order",
+      "return",
+      "support",
+      "help",
+      "complaint"
+    ],
+    "requirements": [
+      "IVR/IVA for self-service",
+      "Knowledge base integration",
+      "Case/ticket creation",
+      "Agent routing & escalation"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_001",
+        "name": "Order Status Inquiry",
+        "description": "Customer asks about the current status of their order.",
+        "default_routing": "IVR lookup → Agent escalation if needed",
+        "default_ai_features": [
+          "IVR automation",
+          "Order status retrieval"
+        ]
+      },
+      {
+        "id": "uc_002",
+        "name": "Return Request",
+        "description": "Customer wants to return an item and receive instructions or a refund.",
+        "default_routing": "Self-service IVA → Agent support if exception",
+        "default_ai_features": [
+          "Return eligibility check",
+          "Automated refund process"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_002",
+    "flow_name": "Outbound Notifications",
+    "category": "Notifications",
+    "keywords": [
+      "notification",
+      "alert",
+      "reminder",
+      "SMS",
+      "update"
+    ],
+    "requirements": [
+      "Multichannel outbound (SMS, email, voice)",
+      "Scheduling & campaign management",
+      "Opt-in/opt-out compliance"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_003",
+        "name": "Promotional Notification",
+        "description": "Send marketing messages to opted-in customers.",
+        "default_routing": "Automated campaign → Multi-channel delivery",
+        "default_ai_features": [
+          "Message personalization",
+          "Delivery optimization"
+        ]
+      },
+      {
+        "id": "uc_004",
+        "name": "Order Update Notification",
+        "description": "Notify customers of shipment or order changes via email/SMS.",
+        "default_routing": "Integration with order system → SMS/email push",
+        "default_ai_features": [
+          "Automated message generation",
+          "Channel preference selection"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_003",
+    "flow_name": "Billing & Payments",
+    "category": "Billing",
+    "keywords": [
+      "bill",
+      "payment",
+      "invoice",
+      "refund",
+      "balance"
+    ],
+    "requirements": [
+      "Secure payment processing",
+      "Balance inquiry automation",
+      "Refund request handling",
+      "Billing dispute escalation"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_005",
+        "name": "Bill Inquiry",
+        "description": "Customer asks for details about their current bill or invoice.",
+        "default_routing": "Self-service IVA → Agent escalation for complex questions",
+        "default_ai_features": [
+          "Automated invoice retrieval",
+          "Summarized billing explanation"
+        ]
+      },
+      {
+        "id": "uc_006",
+        "name": "Payment Processing",
+        "description": "Customer wants to make a payment or check payment status.",
+        "default_routing": "Payment portal automation → Agent support for exceptions",
+        "default_ai_features": [
+          "Automated payment confirmation",
+          "Fraud detection alerts"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_004",
+    "flow_name": "Appointment Scheduling",
+    "category": "Scheduling",
+    "keywords": [
+      "schedule",
+      "appointment",
+      "booking",
+      "reservation",
+      "calendar"
+    ],
+    "requirements": [
+      "Calendar integration",
+      "Automated reminders",
+      "Rescheduling & cancellation handling",
+      "Multi-channel scheduling (web, phone, chat)"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_007",
+        "name": "New Appointment Booking",
+        "description": "Customer schedules a new appointment through any channel.",
+        "default_routing": "Calendar integration → Confirm booking → Reminder setup",
+        "default_ai_features": [
+          "Automated time slot suggestions",
+          "Confirmation reminders"
+        ]
+      },
+      {
+        "id": "uc_008",
+        "name": "Reschedule Appointment",
+        "description": "Customer changes the date/time of an existing appointment.",
+        "default_routing": "Verify existing appointment → Update calendar → Notify customer",
+        "default_ai_features": [
+          "Suggested alternative times",
+          "Automated notifications"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_005",
+    "flow_name": "Technical Support",
+    "category": "Support",
+    "keywords": [
+      "technical",
+      "IT",
+      "network",
+      "system",
+      "troubleshoot",
+      "error"
+    ],
+    "requirements": [
+      "Device/system knowledge base",
+      "Remote troubleshooting",
+      "Escalation to tiered support",
+      "Ticket tracking"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_009",
+        "name": "Troubleshoot Connectivity Issue",
+        "description": "Customer reports internet/network problems.",
+        "default_routing": "Automated troubleshooting steps → Escalation to Tier 2 support",
+        "default_ai_features": [
+          "Step-by-step guided troubleshooting",
+          "Error pattern detection"
+        ]
+      },
+      {
+        "id": "uc_010",
+        "name": "Software Issue Resolution",
+        "description": "Customer reports a software malfunction or error.",
+        "default_routing": "Knowledge base self-service → Agent escalation if unresolved",
+        "default_ai_features": [
+          "Automated ticket creation",
+          "Error analysis suggestions"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_006",
+    "flow_name": "Account Management",
+    "category": "Account",
+    "keywords": [
+      "account",
+      "profile",
+      "login",
+      "password",
+      "settings"
+    ],
+    "requirements": [
+      "Identity verification",
+      "Account creation & updates",
+      "Password reset flows",
+      "Data privacy compliance"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_011",
+        "name": "Account Creation",
+        "description": "Customer creates a new account with secure verification.",
+        "default_routing": "Self-service portal → Verification process",
+        "default_ai_features": [
+          "Identity verification automation",
+          "Fraud detection"
+        ]
+      },
+      {
+        "id": "uc_012",
+        "name": "Password Reset",
+        "description": "Customer resets forgotten or compromised password.",
+        "default_routing": "Automated password reset → Security verification if needed",
+        "default_ai_features": [
+          "Email/SMS reset links",
+          "Multi-factor verification"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_007",
+    "flow_name": "Order Management",
+    "category": "Orders",
+    "keywords": [
+      "shipping",
+      "delivery",
+      "tracking",
+      "order status",
+      "fulfillment"
+    ],
+    "requirements": [
+      "Order tracking integration",
+      "Shipment notifications",
+      "Cancellation/changes handling",
+      "Returns & exchanges"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_013",
+        "name": "Track Shipment",
+        "description": "Customer checks the status of a shipment.",
+        "default_routing": "Integration with logistics → Agent fallback",
+        "default_ai_features": [
+          "Automated tracking updates",
+          "Delivery ETA prediction"
+        ]
+      },
+      {
+        "id": "uc_014",
+        "name": "Cancel or Change Order",
+        "description": "Customer requests order modification or cancellation.",
+        "default_routing": "Order system check → IVR/Agent routing",
+        "default_ai_features": [
+          "Automated validation",
+          "Notification updates"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_008",
+    "flow_name": "Healthcare Patient Support",
+    "category": "Healthcare",
+    "keywords": [
+      "patient",
+      "prescription",
+      "doctor",
+      "clinic",
+      "health",
+      "insurance"
+    ],
+    "requirements": [
+      "HIPAA compliance",
+      "Appointment scheduling",
+      "Prescription refill requests",
+      "Insurance verification"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_015",
+        "name": "Prescription Refill Request",
+        "description": "Patient requests a refill for a prescription.",
+        "default_routing": "Automated refill → Pharmacy confirmation",
+        "default_ai_features": [
+          "Prescription lookup",
+          "Refill approval automation"
+        ]
+      },
+      {
+        "id": "uc_016",
+        "name": "Insurance Verification",
+        "description": "Verify patient insurance before appointment or service.",
+        "default_routing": "Integration with insurance database → Agent confirmation",
+        "default_ai_features": [
+          "Automated verification",
+          "Exception alerting"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_009",
+    "flow_name": "Financial Services Support",
+    "category": "Financial",
+    "keywords": [
+      "bank",
+      "loan",
+      "mortgage",
+      "credit",
+      "account",
+      "statement"
+    ],
+    "requirements": [
+      "Secure authentication",
+      "Transaction dispute handling",
+      "Loan application support",
+      "Account balance inquiries"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_017",
+        "name": "Account Balance Inquiry",
+        "description": "Customer checks current account balances and recent transactions.",
+        "default_routing": "Automated self-service → Agent escalation if anomalies",
+        "default_ai_features": [
+          "Balance retrieval",
+          "Transaction summarization"
+        ]
+      },
+      {
+        "id": "uc_018",
+        "name": "Loan Application Support",
+        "description": "Assist customers with loan application questions and submission.",
+        "default_routing": "Self-service FAQ → Agent review for exceptions",
+        "default_ai_features": [
+          "Automated form validation",
+          "Eligibility checks"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_010",
+    "flow_name": "Sales & Lead Generation",
+    "category": "Sales",
+    "keywords": [
+      "sales",
+      "quote",
+      "pricing",
+      "demo",
+      "lead"
+    ],
+    "requirements": [
+      "CRM integration",
+      "Lead capture automation",
+      "Quote generation",
+      "Appointment scheduling for sales reps"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_019",
+        "name": "Lead Capture",
+        "description": "Collect and qualify new sales leads from website or campaigns.",
+        "default_routing": "CRM integration → Sales rep assignment",
+        "default_ai_features": [
+          "Lead scoring",
+          "Automated follow-up scheduling"
+        ]
+      },
+      {
+        "id": "uc_020",
+        "name": "Quote Generation",
+        "description": "Generate and send pricing quotes to potential customers.",
+        "default_routing": "Automated quote engine → Sales rep confirmation",
+        "default_ai_features": [
+          "Pricing suggestions",
+          "Proposal formatting"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_011",
+    "flow_name": "Identity Verification",
+    "category": "Account",
+    "keywords": [
+      "identity",
+      "login",
+      "verification",
+      "password reset",
+      "authentication"
+    ],
+    "requirements": [
+      "Secure authentication",
+      "Password reset flows",
+      "Multi-factor authentication",
+      "Compliance with privacy regulations"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_021",
+        "name": "Login Verification",
+        "description": "Customer verifies identity during login or suspicious activity.",
+        "default_routing": "Automated verification → Agent escalation for failures",
+        "default_ai_features": [
+          "Risk scoring",
+          "MFA prompts"
+        ]
+      },
+      {
+        "id": "uc_022",
+        "name": "Password Reset",
+        "description": "Customer requests password reset securely.",
+        "default_routing": "Automated reset portal → MFA confirmation",
+        "default_ai_features": [
+          "Secure reset link",
+          "Fraud detection alerts"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_012",
+    "flow_name": "Order Inquiry",
+    "category": "Orders",
+    "keywords": [
+      "order status",
+      "order details",
+      "check order",
+      "track order"
+    ],
+    "requirements": [
+      "Order status tracking",
+      "Customer inquiry handling",
+      "Integration with order system"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_023",
+        "name": "Check Order Status",
+        "description": "Customer asks for detailed status of a placed order.",
+        "default_routing": "Order system lookup → Agent fallback",
+        "default_ai_features": [
+          "Automated order tracking",
+          "Status summarization"
+        ]
+      },
+      {
+        "id": "uc_024",
+        "name": "Order Detail Inquiry",
+        "description": "Customer wants full order details including items and delivery estimates.",
+        "default_routing": "Integration with fulfillment system → Agent assistance for exceptions",
+        "default_ai_features": [
+          "Order detail retrieval",
+          "Automated notifications"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_013",
+    "flow_name": "Return Process",
+    "category": "Orders",
+    "keywords": [
+      "return",
+      "exchange",
+      "refund",
+      "item return",
+      "replace order"
+    ],
+    "requirements": [
+      "Return instructions automation",
+      "Refund handling",
+      "Exchange processing",
+      "Customer notifications"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_025",
+        "name": "Initiate Return",
+        "description": "Customer starts the process to return an item.",
+        "default_routing": "Self-service portal → Agent if exceptions",
+        "default_ai_features": [
+          "Return eligibility check",
+          "Automated notifications"
+        ]
+      },
+      {
+        "id": "uc_026",
+        "name": "Exchange Item",
+        "description": "Customer requests to exchange an item for another.",
+        "default_routing": "Automated exchange → Agent approval for special cases",
+        "default_ai_features": [
+          "Item availability check",
+          "Shipment coordination"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_014",
+    "flow_name": "Order Updates via Email/SMS",
+    "category": "Notifications",
+    "keywords": [
+      "email update",
+      "SMS update",
+      "order alert",
+      "shipping notification"
+    ],
+    "requirements": [
+      "Email/SMS delivery system",
+      "Automated updates for order progress",
+      "Integration with order management"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_027",
+        "name": "Shipping Notification",
+        "description": "Notify customers when an order has shipped.",
+        "default_routing": "Order system → Automated email/SMS",
+        "default_ai_features": [
+          "Delivery ETA prediction",
+          "Personalized messaging"
+        ]
+      },
+      {
+        "id": "uc_028",
+        "name": "Delivery Update",
+        "description": "Send updates if there are delays or changes in delivery.",
+        "default_routing": "Order management integration → Automated notifications",
+        "default_ai_features": [
+          "Delay detection",
+          "Dynamic rescheduling notifications"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_015",
+    "flow_name": "Promotional Messages",
+    "category": "Marketing",
+    "keywords": [
+      "promotion",
+      "marketing",
+      "offer",
+      "advertisement",
+      "deal"
+    ],
+    "requirements": [
+      "Email/SMS campaign management",
+      "Opt-in/opt-out compliance",
+      "Targeted marketing logic"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_029",
+        "name": "Campaign Message",
+        "description": "Send promotional messages to opted-in customers.",
+        "default_routing": "Campaign scheduler → Multi-channel delivery",
+        "default_ai_features": [
+          "Personalization",
+          "Optimal send time prediction"
+        ]
+      },
+      {
+        "id": "uc_030",
+        "name": "Targeted Offer",
+        "description": "Send promotions based on customer behavior or loyalty tier.",
+        "default_routing": "CRM data → Automated message delivery",
+        "default_ai_features": [
+          "Behavioral segmentation",
+          "Dynamic content generation"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_016",
+    "flow_name": "Billing Inquiry",
+    "category": "Billing",
+    "keywords": [
+      "bill inquiry",
+      "account statement",
+      "charge",
+      "billing question"
+    ],
+    "requirements": [
+      "Customer billing support",
+      "Dispute handling",
+      "Integration with billing system"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_031",
+        "name": "Billing Question",
+        "description": "Customer asks about charges or statements.",
+        "default_routing": "Billing system lookup → Agent escalation if needed",
+        "default_ai_features": [
+          "Automated statement retrieval",
+          "Dispute flagging"
+        ]
+      },
+      {
+        "id": "uc_032",
+        "name": "Dispute Resolution",
+        "description": "Customer disputes a charge and seeks resolution.",
+        "default_routing": "Automated dispute intake → Agent resolution",
+        "default_ai_features": [
+          "Dispute form automation",
+          "Exception detection"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_017",
+    "flow_name": "Refund Process",
+    "category": "Billing",
+    "keywords": [
+      "refund request",
+      "return refund",
+      "reimbursement",
+      "money back"
+    ],
+    "requirements": [
+      "Refund processing automation",
+      "Customer notification",
+      "Accounting reconciliation"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_033",
+        "name": "Refund Request",
+        "description": "Customer requests a refund for a purchase.",
+        "default_routing": "Automated refund approval → Agent confirmation",
+        "default_ai_features": [
+          "Eligibility check",
+          "Automated notification"
+        ]
+      },
+      {
+        "id": "uc_034",
+        "name": "Refund Status Check",
+        "description": "Customer checks status of an ongoing refund.",
+        "default_routing": "System lookup → Automated update",
+        "default_ai_features": [
+          "Status tracking",
+          "Notification alerts"
+        ]
+      }
+    ]
+  },
+  {
+    "flow_id": "flow_018",
+    "flow_name": "Loyalty Points Inquiry",
+    "category": "Marketing",
+    "keywords": [
+      "loyalty points",
+      "rewards balance",
+      "redeem points",
+      "loyalty program"
+    ],
+    "requirements": [
+      "Points tracking",
+      "Redemption automation",
+      "Customer notifications"
+    ],
+    "use_cases": [
+      {
+        "id": "uc_035",
+        "name": "Check Points Balance",
+        "description": "Customer wants to see current loyalty points.",
+        "default_routing": "Self-service portal → Agent fallback",
+        "default_ai_features": [
+          "Points balance retrieval",
+          "Tier calculation"
+        ]
+      },
+      {
+        "id": "uc_036",
+        "name": "Redeem Points",
+        "description": "Customer redeems points for rewards or discounts.",
+        "default_routing": "Automated redemption → Confirmation sent to customer",
+        "default_ai_features": [
+          "Redemption eligibility check",
+          "Reward allocation"
+        ]
+      }
+    ]
+  }
+]

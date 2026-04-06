@@ -11,7 +11,12 @@ def _shim_session_state(session):
     """Mock st.session_state for legacy Python modules that read from it."""
     import sys, types
     st_mock = types.ModuleType('streamlit')
-    ns = types.SimpleNamespace()
+    
+    class DictNamespace(dict):
+        def __getattr__(self, k): return self.get(k)
+        def __setattr__(self, k, v): self[k] = v
+
+    ns = DictNamespace()
     ns.conv_answers     = session.conv_answers
     ns.business_profile = session.business_profile
     ns.assessment       = session.assessment
@@ -46,6 +51,7 @@ async def run_risk(session_id: str):
         return result
 
     except Exception as e:
+        import traceback; traceback.print_exc()
         raise HTTPException(500, f"Risk assessment failed: {e}")
 
 
