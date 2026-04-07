@@ -2,6 +2,7 @@
 
 import { useSessionStore, type Phase } from '@/store/session'
 import { ChevronLeft, ChevronRight, SkipForward } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 const PHASE_ORDER: Phase[] = [1, 2, 3, '3r', '3b', 4]
 
@@ -46,6 +47,7 @@ function isPhaseComplete(phase: Phase, flags: Record<string, boolean>): boolean 
 
 export default function NavBar() {
   const { currentPhase, phaseFlags, setPhase } = useSessionStore()
+  const router = useRouter()
 
   const cur       = currentPhase
   const curIdx    = PHASE_ORDER.indexOf(cur)
@@ -54,21 +56,44 @@ export default function NavBar() {
   const fwdLabel  = FORWARD_LABELS[cur as string | number]
   const backLabel = BACK_LABELS[cur as string | number]
   const isLast    = fwdLabel === null
+
+  // Determine URL phase to detect if we're behind the store phase
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : ''
+  const urlPhase = pathname.replace('/phase/', '')
+  const isBehindStorePhase = urlPhase !== String(cur) && pathname.startsWith('/phase/')
+
   const canBack   = backLabel !== null && curIdx > 0
-  const canFwd    = phaseDone && !isLast
-  const isSkippable = (cur === '3r' || cur === '3b') && !phaseDone
-  const hint      = !phaseDone && !isLast ? HINTS[cur as string | number] : ''
+  // Can always go forward if the current phase URL doesn't match store phase
+  // (need to navigate to current phase first), or if current phase is done
+  const canFwd    = (!isLast && (isBehindStorePhase || phaseDone))
+  const isSkippable = (cur === '3r' || cur === '3b') && !phaseDone && !isBehindStorePhase
+  const hint      = !phaseDone && !isLast && !isBehindStorePhase ? HINTS[cur as string | number] : ''
 
   const goBack = () => {
-    if (canBack) setPhase(PHASE_ORDER[curIdx - 1])
+    if (canBack) {
+      const prev = PHASE_ORDER[curIdx - 1]
+      setPhase(prev)
+      router.push(`/phase/${prev}`)
+    }
   }
 
   const goForward = () => {
-    if (canFwd) setPhase(PHASE_ORDER[curIdx + 1])
+    if (canFwd) {
+      // If URL is behind store phase, navigate to store phase first
+      if (isBehindStorePhase) {
+        router.push(`/phase/${cur}`)
+        return
+      }
+      const next = PHASE_ORDER[curIdx + 1]
+      setPhase(next)
+      router.push(`/phase/${next}`)
+    }
   }
 
   const skip = () => {
-    setPhase(PHASE_ORDER[curIdx + 1])
+    const next = PHASE_ORDER[curIdx + 1]
+    setPhase(next)
+    router.push(`/phase/${next}`)
   }
 
   return (

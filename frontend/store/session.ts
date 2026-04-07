@@ -15,6 +15,7 @@ import type { ConversationState, FlowData, SessionResponse } from '@/lib/api'
 export type Phase = 1 | 2 | 3 | '3r' | '3b' | 4
 
 export interface PhaseFlags {
+  [key: string]: boolean
   phase_1: boolean
   phase_2: boolean
   phase_3: boolean

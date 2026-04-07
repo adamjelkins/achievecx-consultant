@@ -798,6 +798,7 @@ export default function Phase2Page() {
     discovery,
     setConversation,
     setDiscovery,
+    setPhase,
     phaseFlags,
   } = useSessionStore()
 
@@ -852,6 +853,10 @@ export default function Phase2Page() {
       })
       setConvState(updated)
       setConversation(updated)
+      // Explicitly advance phase when conversation completes
+      if (updated.is_complete) {
+        setPhase(3)
+      }
     } catch (e) {
       console.error('Failed to record answer:', e)
     } finally {
