@@ -17,3 +17,5 @@ node_modules/
 backend/data/leads.json
 backend/data/unmapped_flows.json
 .sessions/
+.env
+backend/.env
