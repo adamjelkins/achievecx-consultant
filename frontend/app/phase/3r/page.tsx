@@ -144,7 +144,7 @@ export default function Phase3rPage() {
           // ── Results ──
           <div className="space-y-6 pb-8">
 
-            {/* Score header */}
+            {/* Score + narrative */}
             <div className="flex items-center gap-6 pt-4">
               <div className="flex flex-col items-center gap-1 flex-shrink-0">
                 <div className="text-5xl font-bold tracking-tight" style={{ color }}>
@@ -154,7 +154,6 @@ export default function Phase3rPage() {
                 <div className="text-[10px] text-text-dim">Implementation Risk</div>
               </div>
 
-              {/* Narrative */}
               {narrative && (
                 <div className="flex-1 rounded-lg border-l-2 px-4 py-3 bg-bg-card"
                   style={{ borderColor: color }}>
@@ -167,6 +166,23 @@ export default function Phase3rPage() {
                 </div>
               )}
             </div>
+
+            {/* Inaction risks — shown early for impact */}
+            {inactionRisks.length > 0 && (
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-wider text-text-faint mb-1">
+                  Risk of Inaction
+                </div>
+                <div className="text-[11px] text-text-dim mb-3">
+                  The cost of staying the same.
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {inactionRisks.map((item: any, i: number) => (
+                    <InactionCard key={i} item={item} />
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Risk dimensions */}
             {Object.keys(dimensions).length > 0 && (
@@ -199,19 +215,24 @@ export default function Phase3rPage() {
               </div>
             )}
 
-            {/* Inaction risks */}
-            {inactionRisks.length > 0 && (
+            {/* Mitigations */}
+            {mitigations.length > 0 && (
               <div>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-text-faint mb-1">
-                  Risk of Inaction
-                </div>
-                <div className="text-[11px] text-text-dim mb-3">
-                  The cost of staying the same.
+                <div className="text-[10px] font-bold uppercase tracking-wider text-text-faint mb-3">
+                  Recommended Mitigations
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  {inactionRisks.map((item: any, i: number) => (
-                    <InactionCard key={i} item={item} />
-                  ))}
+                  {mitigations.map((mit: any, i: number) => {
+                    const text = typeof mit === 'string' ? mit : mit?.description || String(mit)
+                    return (
+                      <div key={i}
+                        className="bg-bg-card border border-border rounded-lg p-3
+                                   flex items-start gap-2.5">
+                        <span className="text-accent text-sm flex-shrink-0 mt-0.5">›</span>
+                        <div className="text-xs text-text-secondary leading-relaxed">{text}</div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}
@@ -238,28 +259,6 @@ export default function Phase3rPage() {
                       ))}
                     </div>
                   ))}
-                </div>
-              </div>
-            )}
-
-            {/* Mitigations */}
-            {mitigations.length > 0 && (
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-wider text-text-faint mb-3">
-                  Recommended Mitigations
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {mitigations.map((mit: any, i: number) => {
-                    const text = typeof mit === 'string' ? mit : mit?.description || String(mit)
-                    return (
-                      <div key={i}
-                        className="bg-bg-card border border-border rounded-lg p-3
-                                   flex items-start gap-2.5">
-                        <span className="text-accent text-sm flex-shrink-0 mt-0.5">→</span>
-                        <div className="text-xs text-text-secondary leading-relaxed">{text}</div>
-                      </div>
-                    )
-                  })}
                 </div>
               </div>
             )}

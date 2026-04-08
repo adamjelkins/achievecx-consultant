@@ -2,9 +2,21 @@
 api/routes/blueprint.py
 """
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import Response
 from core.session_store import get_or_create_session, save_session
 
 router = APIRouter()
+
+
+def _normalize_bc_results(bc: dict) -> dict:
+    """Convert string NPV keys back to integers after JSON round-trip."""
+    if not bc:
+        return bc
+    for scenario in ('conservative', 'base', 'optimistic'):
+        s = bc.get(scenario, {})
+        if 'npv' in s and isinstance(s['npv'], dict):
+            s['npv'] = {int(k): v for k, v in s['npv'].items()}
+    return bc
 
 
 def _shim_session_state(session):
@@ -26,7 +38,7 @@ def _shim_session_state(session):
     ns['conv_answers']          = session.conv_answers or {}
     ns['assessment']            = session.assessment or {}
     ns['risk_assessment']       = session.risk_assessment or {}
-    ns['business_case_results'] = session.business_case_results or {}
+    ns['business_case_results'] = _normalize_bc_results(session.business_case_results or {})
     ns['intake_profile']        = session.intake_data or {
         'first_name':   'John',
         'last_name':    'Doe',
@@ -69,3 +81,31 @@ async def get_blueprint(session_id: str):
     if not session.blueprint:
         raise HTTPException(404, "No blueprint found — generate it first")
     return session.blueprint
+
+
+@router.get("/{session_id}/pdf")
+async def download_blueprint_pdf(session_id: str, theme: str = "light"):
+    session = await get_or_create_session(session_id)
+    if not session.blueprint:
+        raise HTTPException(404, "No blueprint found — generate it first")
+
+    try:
+        import sys
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+        from pdf_generator import generate_pdf
+
+        pdf_bytes = generate_pdf(session.blueprint, theme_name=theme)
+
+        company   = session.blueprint.get("company_name", "Blueprint").replace(" ", "_")
+        date_str  = session.blueprint.get("generated_at", "")[:10]
+        filename  = f"CX_Blueprint_{company}_{date_str}_{theme}.pdf"
+
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        raise HTTPException(500, f"PDF generation failed: {e}")

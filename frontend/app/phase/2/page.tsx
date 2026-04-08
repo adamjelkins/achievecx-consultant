@@ -103,7 +103,7 @@ function PlatformDiagram({ flows, channels, companyName, selectedFlowId, onSelec
   }, [])
 
   const TOP_PAD = 28
-  const ROW_H   = 52
+  const ROW_H   = 42   // row slot height — ucH is 36, leaving 6px gap
   const DS_H    = 56
   const LEG_H   = 28
   const BOT_PAD = 8
@@ -129,7 +129,7 @@ function PlatformDiagram({ flows, channels, companyName, selectedFlowId, onSelec
 
   // Node sizes
   const chW = 100, chH = 34
-  const ucW = 168, ucH = 44
+  const ucW = 168, ucH = 36
   const pltW = 110, pltH = 88
   const outW = 76, outH = 32
 
@@ -416,98 +416,97 @@ function PlatformDiagram({ flows, channels, companyName, selectedFlowId, onSelec
 
 function DetailPanel({ flow, onClose }: { flow: FlowData; onClose: () => void }) {
   const f = flow as any
+  const hasAssessmentData = !!(f.cwr_label || f.rationale || f.ai_score)
+
   return (
-    <div style={{
-      background: COLORS.surface,
-      borderLeft: `1px solid ${COLORS.border2}`,
-      width: 280,
-      flexShrink: 0,
-      overflowY: 'auto',
-      padding: '16px',
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.textPrimary, lineHeight: 1.3 }}>
-          {flow.flow_name}
+    <div style={{ padding: '12px 16px' }}>
+      {/* Header row */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.textPrimary }}>
+            {flow.flow_name}
+          </div>
+          {f.cwr_label && (
+            <div style={{
+              display: 'inline-block',
+              background: f.cwr_color + '22',
+              border: `1px solid ${f.cwr_color}44`,
+              borderRadius: 4,
+              padding: '1px 8px',
+              fontSize: 10,
+              fontWeight: 700,
+              color: f.cwr_color,
+              letterSpacing: '0.06em',
+            }}>
+              {f.cwr_label}
+            </div>
+          )}
         </div>
         <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: COLORS.textDim, padding: 2 }}>
           <X size={14} />
         </button>
       </div>
 
-      {/* CWR badge */}
-      {f.cwr_label && (
+      {!hasAssessmentData ? (
         <div style={{
-          display: 'inline-block',
-          background: f.cwr_color + '22',
-          border: `1px solid ${f.cwr_color}44`,
-          borderRadius: 4,
-          padding: '2px 8px',
-          fontSize: 10,
-          fontWeight: 700,
-          color: f.cwr_color,
-          marginBottom: 12,
-          letterSpacing: '0.06em',
+          fontSize: 11, color: COLORS.textDim, lineHeight: 1.5,
+          background: COLORS.surface2, border: `1px solid ${COLORS.border}`,
+          borderRadius: 6, padding: '8px 12px',
         }}>
-          {f.cwr_label}
+          Run the AI Assessment to see automation potential, containment targets, and rationale for this flow.
+        </div>
+      ) : (
+        // Post-assessment — horizontal layout
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          {f.rationale && (
+            <div style={{ flex: '2 1 200px', fontSize: 11, color: COLORS.textMuted, lineHeight: 1.6 }}>
+              {f.rationale}
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', flex: '1 1 auto' }}>
+            {f.contain_display && (
+              <div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Containment</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.green }}>{f.contain_display}</div>
+              </div>
+            )}
+            {f.human_role && (
+              <div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Human Role</div>
+                <div style={{ fontSize: 11, color: HR_COLORS[f.human_role] || COLORS.textSec }}>{f.human_role}</div>
+              </div>
+            )}
+            {f.complexity && (
+              <div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Complexity</div>
+                <div style={{ fontSize: 11, color: COMPLEXITY_COLORS[f.complexity] || COLORS.textSec }}>{f.complexity}</div>
+              </div>
+            )}
+            {f.entry_channels?.length > 0 && (
+              <div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Channels</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                  {f.entry_channels.map((ch: string) => (
+                    <span key={ch} style={{ background: COLORS.surface2, border: `1px solid ${COLORS.border}`, borderRadius: 3, padding: '1px 5px', fontSize: 10, color: COLORS.textMuted }}>
+                      {CHANNEL_ICONS[ch] || ''} {ch}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {f.data_sources?.length > 0 && (
+              <div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Data Sources</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                  {f.data_sources.map((ds: string) => (
+                    <span key={ds} style={{ background: COLORS.surface2, border: `1px solid ${COLORS.border}`, borderRadius: 3, padding: '1px 5px', fontSize: 10, color: COLORS.textMuted }}>{ds}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
-
-      {f.rationale && (
-        <div style={{ fontSize: 11, color: COLORS.textMuted, lineHeight: 1.6, marginBottom: 12 }}>
-          {f.rationale}
-        </div>
-      )}
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-
-        {f.human_role && (
-          <div>
-            <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Human Role</div>
-            <div style={{ fontSize: 11, color: HR_COLORS[f.human_role] || COLORS.textSec }}>{f.human_role}</div>
-            {f.human_detail && <div style={{ fontSize: 10, color: COLORS.textDim, marginTop: 2 }}>{f.human_detail}</div>}
-          </div>
-        )}
-
-        {f.complexity && (
-          <div>
-            <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Complexity</div>
-            <div style={{ fontSize: 11, color: COMPLEXITY_COLORS[f.complexity] || COLORS.textSec }}>{f.complexity}</div>
-          </div>
-        )}
-
-        {f.entry_channels?.length > 0 && (
-          <div>
-            <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Channels</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-              {f.entry_channels.map((ch: string) => (
-                <span key={ch} style={{ background: COLORS.surface2, border: `1px solid ${COLORS.border}`, borderRadius: 3, padding: '1px 6px', fontSize: 10, color: COLORS.textMuted }}>
-                  {CHANNEL_ICONS[ch] || ''} {ch}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {f.data_sources?.length > 0 && (
-          <div>
-            <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Data Sources</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-              {f.data_sources.map((ds: string) => (
-                <span key={ds} style={{ background: COLORS.surface2, border: `1px solid ${COLORS.border}`, borderRadius: 3, padding: '1px 6px', fontSize: 10, color: COLORS.textMuted }}>{ds}</span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {f.contain_display && (
-          <div>
-            <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Containment Target</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.green }}>{f.contain_display}</div>
-            {f.contain_label && <div style={{ fontSize: 10, color: COLORS.textDim }}>{f.contain_label}</div>}
-          </div>
-        )}
-
-      </div>
     </div>
   )
 }
@@ -908,21 +907,24 @@ export default function Phase2Page() {
     <AppShell>
       <div style={{
         display: 'flex',
-        flexDirection: 'column',
-        height: 'calc(100vh - 180px)', // leave room for stepper + nav
+        flexDirection: 'row',
+        height: 'calc(100vh - 130px)',
         gap: 0,
         overflow: 'hidden',
+        border: `1px solid ${COLORS.border}`,
+        borderRadius: 8,
       }}>
 
-        {/* Top: conversation pane — fixed height */}
+        {/* Left: conversation pane */}
         <div style={{
-          height: 320,
+          width: '38%',
           flexShrink: 0,
-          border: `1px solid ${COLORS.border}`,
-          borderRadius: '8px 8px 0 0',
+          borderRight: `1px solid ${COLORS.border}`,
           overflow: 'hidden',
           background: COLORS.bg,
           position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
         }}>
           {submitting && (
             <div style={{ position: 'absolute', top: 8, right: 12, zIndex: 10 }}>
@@ -940,17 +942,15 @@ export default function Phase2Page() {
           />
         </div>
 
-        {/* Bottom: diagram + detail panel */}
+        {/* Right: diagram + detail panel */}
         <div style={{
           flex: 1,
           display: 'flex',
+          flexDirection: 'column',
           overflow: 'hidden',
-          border: `1px solid ${COLORS.border}`,
-          borderTop: 'none',
-          borderRadius: '0 0 8px 8px',
         }}>
-          {/* Diagram */}
-          <div style={{ flex: 1, overflow: 'auto', padding: 12, background: COLORS.bg }}>
+          {/* Diagram — fixed, not affected by detail panel */}
+          <div style={{ flex: 1, overflow: 'auto', padding: 12, background: COLORS.bg, minHeight: 0 }}>
             <PlatformDiagram
               flows={flows}
               channels={channels}
@@ -960,12 +960,20 @@ export default function Phase2Page() {
             />
           </div>
 
-          {/* Detail panel — slides in when flow selected */}
+          {/* Detail panel — appears below diagram when flow selected */}
           {selectedFlow && (
-            <DetailPanel
-              flow={selectedFlow}
-              onClose={() => setSelectedFlowId('')}
-            />
+            <div style={{
+              flexShrink: 0,
+              borderTop: `1px solid ${COLORS.border2}`,
+              background: COLORS.surface,
+              maxHeight: 220,
+              overflowY: 'auto',
+            }}>
+              <DetailPanel
+                flow={selectedFlow}
+                onClose={() => setSelectedFlowId('')}
+              />
+            </div>
           )}
         </div>
 

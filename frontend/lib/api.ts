@@ -164,6 +164,13 @@ export const Blueprint = {
 
   get: (sessionId: string): Promise<any> =>
     api.get(`/api/blueprint/${sessionId}`).then(r => r.data),
+
+  downloadPdf: (sessionId: string, theme: 'light' | 'dark' = 'light'): void => {
+    window.open(
+      `http://localhost:8000/api/blueprint/${sessionId}/pdf?theme=${theme}`,
+      '_blank'
+    )
+  },
 }
 
 // ── Vendors ────────────────────────────────────────────

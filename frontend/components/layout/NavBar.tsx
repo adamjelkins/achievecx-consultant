@@ -1,10 +1,8 @@
 'use client'
 
-import { useSessionStore, type Phase } from '@/store/session'
+import { useSessionStore, type Phase, PHASE_ORDER, phaseFromPath, phaseIndex } from '@/store/session'
+import { usePathname, useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight, SkipForward } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-
-const PHASE_ORDER: Phase[] = [1, 2, 3, '3r', '3b', 4]
 
 const PHASE_LABELS: Record<string | number, string> = {
   1: 'Business Profile',
@@ -15,85 +13,68 @@ const PHASE_LABELS: Record<string | number, string> = {
   4: 'CX Blueprint',
 }
 
-const FORWARD_LABELS: Record<string | number, string | null> = {
-  1: 'Flow Confirmation',
-  2: 'AI Assessment',
-  3: 'Risk Assessment',
-  '3r': 'Business Case',
-  '3b': 'CX Blueprint',
-  4: null,
-}
-
-const BACK_LABELS: Record<string | number, string | null> = {
-  1: null,
-  2: 'Business Profile',
-  3: 'Flow Confirmation',
-  '3r': 'AI Assessment',
-  '3b': 'Risk Assessment',
-  4: 'Business Case',
-}
-
 const HINTS: Record<string | number, string> = {
-  2: 'Complete the discovery conversation to continue.',
-  3: 'Run the AI Assessment to continue.',
+  2:    'Complete the discovery conversation to continue.',
+  3:    'Run the AI Assessment to continue.',
   '3r': 'Review risk or skip to continue.',
   '3b': 'Calculate business case or skip to continue.',
 }
 
-function isPhaseComplete(phase: Phase, flags: Record<string, boolean>): boolean {
-  const key = `phase_${phase}`
-  return flags[key] ?? false
-}
+const SKIPPABLE: (Phase)[] = ['3r', '3b']
 
 export default function NavBar() {
-  const { currentPhase, phaseFlags, setPhase } = useSessionStore()
-  const router = useRouter()
+  const { phaseFlags, currentPhase, setPhase } = useSessionStore()
+  const pathname = usePathname()
+  const router   = useRouter()
 
-  const cur       = currentPhase
-  const curIdx    = PHASE_ORDER.indexOf(cur)
+  // Everything driven by URL
+  const urlPhase  = phaseFromPath(pathname)
+  const cur       = urlPhase ?? currentPhase
+  const curIdx    = phaseIndex(cur)
   const total     = PHASE_ORDER.length
-  const phaseDone = isPhaseComplete(cur, phaseFlags)
-  const fwdLabel  = FORWARD_LABELS[cur as string | number]
-  const backLabel = BACK_LABELS[cur as string | number]
-  const isLast    = fwdLabel === null
+  const hwIdx     = phaseIndex(currentPhase)  // highwater
 
-  // Determine URL phase to detect if we're behind the store phase
-  const pathname = typeof window !== 'undefined' ? window.location.pathname : ''
-  const urlPhase = pathname.replace('/phase/', '')
-  const isBehindStorePhase = urlPhase !== String(cur) && pathname.startsWith('/phase/')
+  const isComplete = (phase: Phase) => phaseFlags[`phase_${phase}`] ?? false
+  const phaseDone  = isComplete(cur)
 
-  const canBack   = backLabel !== null && curIdx > 0
-  // Can always go forward if the current phase URL doesn't match store phase
-  // (need to navigate to current phase first), or if current phase is done
-  const canFwd    = (!isLast && (isBehindStorePhase || phaseDone))
-  const isSkippable = (cur === '3r' || cur === '3b') && !phaseDone && !isBehindStorePhase
-  const hint      = !phaseDone && !isLast && !isBehindStorePhase ? HINTS[cur as string | number] : ''
+  const hasPrev    = curIdx > 0
+  const hasNext    = curIdx < total - 1
+  const prevPhase  = hasPrev ? PHASE_ORDER[curIdx - 1] : null
+  const nextPhase  = hasNext ? PHASE_ORDER[curIdx + 1] : null
+
+  // Can go back always if there's a previous phase
+  const canBack    = hasPrev
+
+  // Can go forward if current phase is done, OR if we're below the highwater mark
+  const canFwd     = hasNext && (phaseDone || curIdx < hwIdx)
+
+  const isSkippable = SKIPPABLE.includes(cur) && !phaseDone
+  const isLast      = !hasNext
+  const hint        = !phaseDone && hasNext && curIdx >= hwIdx ? HINTS[cur as string | number] : ''
 
   const goBack = () => {
-    if (canBack) {
-      const prev = PHASE_ORDER[curIdx - 1]
-      setPhase(prev)
-      router.push(`/phase/${prev}`)
+    if (canBack && prevPhase !== null) {
+      router.push(`/phase/${prevPhase}`)
     }
   }
 
   const goForward = () => {
-    if (canFwd) {
-      // If URL is behind store phase, navigate to store phase first
-      if (isBehindStorePhase) {
-        router.push(`/phase/${cur}`)
-        return
+    if (canFwd && nextPhase !== null) {
+      // Advance highwater if needed
+      if (phaseIndex(nextPhase) > hwIdx) {
+        setPhase(nextPhase)
       }
-      const next = PHASE_ORDER[curIdx + 1]
-      setPhase(next)
-      router.push(`/phase/${next}`)
+      router.push(`/phase/${nextPhase}`)
     }
   }
 
   const skip = () => {
-    const next = PHASE_ORDER[curIdx + 1]
-    setPhase(next)
-    router.push(`/phase/${next}`)
+    if (nextPhase !== null) {
+      if (phaseIndex(nextPhase) > hwIdx) {
+        setPhase(nextPhase)
+      }
+      router.push(`/phase/${nextPhase}`)
+    }
   }
 
   return (
@@ -101,7 +82,7 @@ export default function NavBar() {
 
       {/* Back */}
       <div className="w-36 flex-shrink-0">
-        {canBack && (
+        {canBack && prevPhase !== null && (
           <button
             onClick={goBack}
             className="flex items-center gap-1.5 text-sm text-text-muted
@@ -110,12 +91,12 @@ export default function NavBar() {
                        transition-all"
           >
             <ChevronLeft size={14} />
-            <span className="truncate">{backLabel}</span>
+            <span className="truncate">{PHASE_LABELS[prevPhase as string | number]}</span>
           </button>
         )}
       </div>
 
-      {/* Center — phase indicator */}
+      {/* Center */}
       <div className="flex-1 text-center">
         <div className="text-[10px] text-text-dim mb-0.5 uppercase tracking-wider">
           Step {curIdx + 1} of {total}
@@ -156,17 +137,19 @@ export default function NavBar() {
             </button>
           </>
         ) : (
-          <button
-            onClick={goForward}
-            disabled={!canFwd}
-            className="flex items-center gap-1.5 text-sm font-semibold
-                       bg-accent text-white rounded-lg px-4 py-2 w-full
-                       justify-center hover:bg-accent-hover
-                       transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            <span className="truncate">{fwdLabel}</span>
-            <ChevronRight size={14} className="flex-shrink-0" />
-          </button>
+          nextPhase !== null && (
+            <button
+              onClick={goForward}
+              disabled={!canFwd}
+              className="flex items-center gap-1.5 text-sm font-semibold
+                         bg-accent text-white rounded-lg px-4 py-2 w-full
+                         justify-center hover:bg-accent-hover
+                         transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <span className="truncate">{PHASE_LABELS[nextPhase as string | number]}</span>
+              <ChevronRight size={14} className="flex-shrink-0" />
+            </button>
+          )
         )}
       </div>
 
