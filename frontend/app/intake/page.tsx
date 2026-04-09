@@ -119,7 +119,7 @@ export default function IntakePage() {
                   type="text"
                   value={form.first_name}
                   onChange={e => update('first_name', e.target.value)}
-                  placeholder="Adam"
+                  placeholder="John"
                   className="w-full bg-bg-surface border border-border rounded-lg
                              px-3 py-2 text-sm text-white placeholder-text-faint
                              focus:outline-none focus:border-accent transition-colors"
@@ -133,7 +133,7 @@ export default function IntakePage() {
                   type="text"
                   value={form.last_name}
                   onChange={e => update('last_name', e.target.value)}
-                  placeholder="Elkins"
+                  placeholder="Doe"
                   className="w-full bg-bg-surface border border-border rounded-lg
                              px-3 py-2 text-sm text-white placeholder-text-faint
                              focus:outline-none focus:border-accent transition-colors"
@@ -151,7 +151,7 @@ export default function IntakePage() {
                 value={form.email}
                 onChange={e => update('email', e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-                placeholder="adam@company.com"
+                placeholder="john.doe@acme.com"
                 className="w-full bg-bg-surface border border-border rounded-lg
                            px-3 py-2 text-sm text-white placeholder-text-faint
                            focus:outline-none focus:border-accent transition-colors"
