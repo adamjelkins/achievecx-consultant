@@ -32,8 +32,7 @@ export default function LoginPage() {
     <div className="flex items-center justify-center h-screen bg-bg">
       <div className="w-80">
         <div className="mb-8 text-center">
-          <div className="text-xl font-bold text-white tracking-tight">AchieveCX</div>
-          <div className="text-xs text-text-faint mt-1">AI Consultant · Private Access</div>
+          <div className="text-xs text-text-faint">Private Access</div>
         </div>
 
         <div className="bg-bg-card border border-border rounded-xl p-6 space-y-4">
