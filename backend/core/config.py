@@ -24,7 +24,10 @@ class Settings(BaseSettings):
 
     # App
     app_env: str = "development"
-    cors_origins: list[str] = ["http://localhost:3000"]
+    cors_origins: list[str] = [
+        "http://localhost:3000",
+        "https://test-elk.vercel.app",
+    ]
     secret_key: str = "changeme-in-production"
 
     # Data paths
