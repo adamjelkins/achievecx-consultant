@@ -166,8 +166,9 @@ export const Blueprint = {
     api.get(`/api/blueprint/${sessionId}`).then(r => r.data),
 
   downloadPdf: (sessionId: string, theme: 'light' | 'dark' = 'light'): void => {
+    const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
     window.open(
-      `http://localhost:8000/api/blueprint/${sessionId}/pdf?theme=${theme}`,
+      `${base}/api/blueprint/${sessionId}/pdf?theme=${theme}`,
       '_blank'
     )
   },
