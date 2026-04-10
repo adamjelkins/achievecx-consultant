@@ -20,7 +20,7 @@ def _mock_streamlit(session):
         st_mock.info    = lambda x: None
         sys.modules['streamlit'] = st_mock
     try:
-        import streamlit as st
+        import streamlit as st  # type: ignore
     except ImportError:
         import sys as _sys
         st = _sys.modules['streamlit']
