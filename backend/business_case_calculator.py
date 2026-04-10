@@ -19,31 +19,34 @@ from typing import Literal
 
 SCENARIO_MULTIPLIERS = {
     "conservative": {
-        "automation_pct_factor":    0.75,   # achieve 75% of target automation
-        "churn_reduction_factor":   0.50,   # only 50% of projected churn improvement
-        "impl_cost_factor":         1.30,   # implementation costs 30% more
-        "auto_contact_cost_factor": 1.25,   # automation costs 25% more per contact
+        "automation_pct_factor":    0.80,   # achieve 80% of target automation
+        "churn_reduction_factor":   0.60,   # 60% of projected churn improvement
+        "impl_cost_factor":         1.20,   # implementation costs 20% more
+        "auto_contact_cost_factor": 1.15,   # automation costs 15% more per contact
+        "savings_haircut":          0.82,   # apply 18% haircut to total savings
         "label":                    "Conservative",
         "color":                    "#f59e0b",
-        "description":              "Slower adoption, higher implementation costs, modest churn improvement.",
+        "description":              "Slower adoption, modest churn improvement, some implementation overrun.",
     },
     "base": {
         "automation_pct_factor":    1.00,
         "churn_reduction_factor":   1.00,
         "impl_cost_factor":         1.00,
         "auto_contact_cost_factor": 1.00,
+        "savings_haircut":          1.00,
         "label":                    "Base Case",
-        "color":                    "#6366f1",
+        "color":                    "#818cf8",
         "description":              "Typical deployment based on industry benchmarks.",
     },
     "optimistic": {
         "automation_pct_factor":    1.20,   # achieve 120% of target (capped at 80% max)
-        "churn_reduction_factor":   1.30,   # 30% better churn improvement than expected
+        "churn_reduction_factor":   1.40,   # 40% better churn improvement than expected
         "impl_cost_factor":         0.85,   # comes in 15% under budget
-        "auto_contact_cost_factor": 0.85,   # automation costs less per contact
+        "auto_contact_cost_factor": 0.88,   # automation costs less per contact
+        "savings_haircut":          1.18,   # 18% upside on total savings
         "label":                    "Optimistic",
         "color":                    "#22c55e",
-        "description":              "Faster adoption, better churn outcomes, implementation on budget.",
+        "description":              "Fast adoption, strong churn outcomes, implementation under budget.",
     },
 }
 
@@ -62,7 +65,7 @@ class BusinessCaseInputs:
     current_automation_pct: float   = 0.00   # existing self-service
 
     # Staffing — current
-    agent_count:            int     = 10
+    agent_count:            int     = 100
     hourly_agent_cost:      float   = 17.00
     burden_rate:            float   = 0.18
     churn_rate:             float   = 0.32
@@ -301,7 +304,8 @@ def _run_scenario(
 
     # ── ROI ──
     impl_cost        = inputs.implementation_cost * m["impl_cost_factor"]
-    annual_savings   = current["total_cost"] - proposed["total_cost"]
+    base_savings     = current["total_cost"] - proposed["total_cost"]
+    annual_savings   = base_savings * m.get("savings_haircut", 1.0)
     net_first_year   = annual_savings - impl_cost
     payback_months   = (
         (impl_cost / (annual_savings / 12))
@@ -467,7 +471,7 @@ def prefill_from_session(session_state: dict) -> "BusinessCaseInputs":
         "Under 1,000":      500,
         "1,000 – 10,000":   5_000,
         "10,000 – 50,000":  25_000,
-        "50,000+":          75_000,
+        "50,000+":          600_000,
         "Not sure yet":     10_000,
     }
     vol_str = answers.get("volume", "")

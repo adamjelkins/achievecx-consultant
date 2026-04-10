@@ -43,7 +43,109 @@ async def run_assessment(session_id: str):
 
         _mock_streamlit(session)
         from maturity_assessment import run_assessment as _run
+
+        # Enrich confirmed flows with template data BEFORE scoring
+        # so _score_flow gets the correct category
+        try:
+            import json
+            tmpl_path = Path(__file__).parent.parent.parent / 'data' / 'flow_templates.json'
+            with open(tmpl_path) as f:
+                templates = json.load(f)
+            name_lookup = {
+                v.get('flow_name', '').lower(): v
+                for v in templates.values()
+            }
+
+            KEYWORD_CATEGORY = {
+                'billing': 'Billing', 'payment': 'Billing', 'invoice': 'Billing',
+                'order': 'Order Management', 'shipment': 'Order Management',
+                'delivery': 'Order Management', 'tracking': 'Order Management',
+                'status': 'Order Management',
+                'technical': 'Technical Support', 'outage': 'Technical Support',
+                'troubleshoot': 'Technical Support',
+                'support': 'Customer Care', 'complaint': 'Customer Care',
+                'faq': 'Customer Care', 'general': 'Customer Care',
+                'account': 'Account Services', 'activation': 'Account Services',
+                'changes': 'Account Services', 'update': 'Account Services',
+                'password': 'Authentication & Security',
+                'retention': 'Customer Lifecycle', 'win-back': 'Customer Lifecycle',
+                'upsell': 'Sales Support', 'sales': 'Sales Support',
+                'appointment': 'Scheduling', 'schedule': 'Scheduling',
+                'notification': 'Proactive Communications', 'alert': 'Proactive Communications',
+                'reminder': 'Proactive Communications',
+            }
+
+            def _infer_category(flow_name: str) -> str:
+                nl = flow_name.lower()
+                for kw, cat in KEYWORD_CATEGORY.items():
+                    if kw in nl:
+                        return cat
+                return ''
+            for flow in confirmed:
+                fid  = flow.get('flow_id', '')
+                # Skip ID lookup — sequential IDs don't match canonical template IDs
+                tmpl = name_lookup.get(flow.get('flow_name', '').lower())
+                # Apply template data if found, keyword category as fallback
+                # Override if category is missing or generic
+                if not flow.get('category') or flow.get('category') in ('General', 'Unknown', ''):
+                    if tmpl:
+                        flow['category'] = tmpl.get('category', '')
+                    if not flow.get('category') or flow.get('category') in ('General', 'Unknown', ''):
+                        flow['category'] = _infer_category(flow.get('flow_name', ''))
+                if tmpl:
+                    if not flow.get('entry_channels'):
+                        flow['entry_channels'] = tmpl.get('entry_channels', [])
+                    if not flow.get('data_sources'):
+                        flow['data_sources']   = tmpl.get('data_sources', [])
+                    if not flow.get('human_role'):
+                        flow['human_role']     = tmpl.get('human_role', '')
+                    if not flow.get('complexity'):
+                        flow['complexity']     = tmpl.get('complexity', '')
+                    flow['human_detail']   = tmpl.get('human_role_detail', '')
+                    flow['intents']        = tmpl.get('intents', [])
+                    flow['output_actions'] = tmpl.get('output_actions', [])
+                    flow['authentication'] = tmpl.get('authentication', '')
+                else:
+                    # No template match — still set keyword category
+                    if not flow.get('category'):
+                        flow['category'] = _infer_category(flow.get('flow_name', ''))
+        except Exception as te:
+            print(f'[assessment] Pre-enrichment failed: {te}')
+
         result = _run(confirmed, session.business_profile)
+
+        # Also enrich scored_flows in result (preserves any extra fields)
+        try:
+            for flow in result.get('scored_flows', []):
+                fid  = flow.get('flow_id', '')
+                # Skip ID lookup — sequential IDs don't match canonical template IDs
+                tmpl = name_lookup.get(flow.get('flow_name', '').lower())
+                # Apply template data if found, keyword category as fallback
+                # Override if category is missing or generic
+                if not flow.get('category') or flow.get('category') in ('General', 'Unknown', ''):
+                    if tmpl:
+                        flow['category'] = tmpl.get('category', '')
+                    if not flow.get('category') or flow.get('category') in ('General', 'Unknown', ''):
+                        flow['category'] = _infer_category(flow.get('flow_name', ''))
+                if tmpl:
+                    if not flow.get('entry_channels'):
+                        flow['entry_channels'] = tmpl.get('entry_channels', [])
+                    if not flow.get('data_sources'):
+                        flow['data_sources']   = tmpl.get('data_sources', [])
+                    if not flow.get('human_role'):
+                        flow['human_role']     = tmpl.get('human_role', '')
+                    if not flow.get('complexity'):
+                        flow['complexity']     = tmpl.get('complexity', '')
+                    flow['human_detail']   = tmpl.get('human_role_detail', '')
+                    flow['intents']        = tmpl.get('intents', [])
+                    flow['output_actions'] = tmpl.get('output_actions', [])
+                    flow['authentication'] = tmpl.get('authentication', '')
+                else:
+                    # No template match — still set keyword category
+                    if not flow.get('category'):
+                        flow['category'] = _infer_category(flow.get('flow_name', ''))
+        except Exception as te:
+            print(f'[assessment] Post-enrichment failed: {te}')
 
         session.assessment       = result
         session.phase_3_complete = True

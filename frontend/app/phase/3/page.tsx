@@ -62,14 +62,31 @@ function ScoreGauge({ score, label, color }: { score: number; label: string; col
   )
 }
 
+// ── Shared tag + field components ────────────────────────────────
+
+const Tag = ({ label, color }: { label: string; color?: string }) => (
+  <span style={{
+    background: (color || '#818cf8') + '18',
+    border: `1px solid ${(color || '#818cf8')}33`,
+    borderRadius: 3, padding: '1px 6px',
+    fontSize: 10, color: color || '#a0a0a0',
+    display: 'inline-block',
+  }}>{label}</span>
+)
+
+const FieldLabel = ({ label }: { label: string }) => (
+  <div style={{ fontSize: 9, fontWeight: 700, color: '#606060',
+    textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{label}</div>
+)
+
 // ── Flow card ────────────────────────────────────────────────────
 
 function FlowCard({ flow }: { flow: any }) {
   const [expanded, setExpanded] = useState(false)
-  const cwr      = flow.crawl_walk_run || 'Crawl'
-  const color    = CWR_COLORS[cwr] || '#9ca3af'
-  const label    = CWR_LABELS[cwr] || cwr
-  const score    = flow.ai_score || 0
+  const cwr   = flow.crawl_walk_run || 'Crawl'
+  const color = CWR_COLORS[cwr] || '#9ca3af'
+  const label = CWR_LABELS[cwr] || cwr
+  const score = flow.ai_score || 0
 
   return (
     <div
@@ -84,52 +101,99 @@ function FlowCard({ flow }: { flow: any }) {
       }}
       onClick={() => setExpanded(!expanded)}
     >
+      {/* Header row */}
       <div className="flex items-center gap-3 px-4 py-3">
-        {/* Score bar */}
         <div className="flex-shrink-0 w-8 text-right">
           <div className="text-sm font-bold" style={{ color }}>{score}</div>
         </div>
-
-        {/* Flow name */}
         <div className="flex-1 min-w-0">
           <div className="text-sm font-medium text-text-primary truncate">{flow.flow_name}</div>
           <div className="text-xs mt-0.5" style={{ color }}>{label}</div>
         </div>
-
-        {/* Containment */}
         {flow.contain_display && (
           <div className="flex-shrink-0 text-right">
             <div className="text-sm font-bold text-success">{flow.contain_display}</div>
             <div className="text-[10px] text-text-dim">containment</div>
           </div>
         )}
-
-        {/* Chevron */}
-        <div className="flex-shrink-0 text-text-faint text-xs">
-          {expanded ? '▲' : '▼'}
-        </div>
+        <div className="flex-shrink-0 text-text-faint text-xs">{expanded ? '▲' : '▼'}</div>
       </div>
 
-      {/* Expanded rationale */}
-      {expanded && flow.rationale && (
-        <div className="px-4 pb-3 border-t border-border/50 pt-3">
-          <div className="text-xs text-text-muted leading-relaxed">{flow.rationale}</div>
-          {flow.effort !== undefined && (
-            <div className="flex gap-4 mt-3">
+      {/* Expanded detail */}
+      {expanded && (
+        <div className="px-4 pb-4 border-t border-border/50 pt-3 space-y-3">
+          {/* Rationale */}
+          {flow.rationale && (
+            <div className="text-xs text-text-muted leading-relaxed">{flow.rationale}</div>
+          )}
+
+          {/* Metrics row */}
+          <div className="flex gap-4 flex-wrap">
+            {flow.complexity && (
               <div>
-                <div className="text-[10px] text-text-dim uppercase tracking-wider mb-1">Effort</div>
-                <div className="text-xs text-text-secondary">{flow.effort}/100</div>
+                <FieldLabel label="Complexity" />
+                <div className="text-xs text-text-secondary">{flow.complexity}</div>
               </div>
+            )}
+            {flow.human_role && (
               <div>
-                <div className="text-[10px] text-text-dim uppercase tracking-wider mb-1">Impact</div>
-                <div className="text-xs text-text-secondary">{flow.impact}/100</div>
+                <FieldLabel label="Human Role" />
+                <div className="text-xs text-text-secondary">{flow.human_role}</div>
               </div>
-              <div>
-                <div className="text-[10px] text-text-dim uppercase tracking-wider mb-1">Confidence</div>
-                <div className="text-xs text-text-secondary">{flow.confidence}/100</div>
+            )}
+            {flow.authentication && (
+              <div className="flex-1 min-w-0">
+                <FieldLabel label="Authentication" />
+                <div className="text-xs text-text-dim">{flow.authentication}</div>
+              </div>
+            )}
+          </div>
+
+          {/* Human role detail */}
+          {flow.human_detail && (
+            <div>
+              <FieldLabel label="Agent Responsibility" />
+              <div className="text-xs text-text-dim leading-relaxed">{flow.human_detail}</div>
+            </div>
+          )}
+
+          {/* Intents */}
+          {flow.intents?.length > 0 && (
+            <div>
+              <FieldLabel label="Common Intents" />
+              <div className="flex flex-wrap gap-1.5">
+                {flow.intents.map((intent: string) => <Tag key={intent} label={intent} color={color} />)}
               </div>
             </div>
           )}
+
+          {/* Channels + Data Sources side by side */}
+          <div className="flex gap-6 flex-wrap">
+            {flow.entry_channels?.length > 0 && (
+              <div>
+                <FieldLabel label="Channels" />
+                <div className="flex flex-wrap gap-1.5">
+                  {flow.entry_channels.map((ch: string) => <Tag key={ch} label={ch} />)}
+                </div>
+              </div>
+            )}
+            {flow.data_sources?.length > 0 && (
+              <div>
+                <FieldLabel label="Data Sources" />
+                <div className="flex flex-wrap gap-1.5">
+                  {flow.data_sources.map((ds: string) => <Tag key={ds} label={ds} />)}
+                </div>
+              </div>
+            )}
+            {flow.output_actions?.length > 0 && (
+              <div>
+                <FieldLabel label="Output Actions" />
+                <div className="flex flex-wrap gap-1.5">
+                  {flow.output_actions.map((a: string) => <Tag key={a} label={a} color="#fbbf24" />)}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

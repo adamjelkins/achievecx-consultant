@@ -640,7 +640,85 @@ def generate_pdf(blueprint: dict, theme_name: str = "light") -> bytes:
 
     story.append(PageBreak())
 
-    # ── PAGE 6: NEXT STEPS + FOOTER ─────────────────────────────
+    # ── PAGE 6: FLOW DETAIL CARDS ───────────────────────────────
+
+    if flow_cards:
+        story.append(Paragraph("INTERACTION FLOW DETAIL", sec_s))
+        story.append(Paragraph(
+            "Full breakdown of each confirmed use case — automation potential, "
+            "human responsibilities, and implementation notes.",
+            _ps("FDI", fontSize=9, textColor=_hex(T["text_secondary"]), spaceAfter=10)
+        ))
+
+        for fc in flow_cards:
+            cwr       = fc.get("crawl_walk_run", "Crawl")
+            cwr_color = {"Run": T["green"], "Walk": T["amber"], "Crawl": T["text_muted"]}.get(cwr, T["text_muted"])
+            cwr_label = {"Run": "[NOW] AI Automated", "Walk": "[NEXT] AI Assisted", "Crawl": "[LATER] Stay Manual"}.get(cwr, cwr)
+
+            # Flow header
+            header_row = Table([[
+                Paragraph(fc.get("flow_name", ""), _ps("FN", fontSize=11, fontName=FONT_BOLD,
+                    textColor=_hex(T["text_primary"]), spaceAfter=0, leading=14)),
+                Paragraph(cwr_label, _ps("CL", fontSize=8, fontName=FONT_BOLD,
+                    textColor=_hex(cwr_color), spaceAfter=0, leading=12)),
+            ]], colWidths=[W * 0.65, W * 0.35])
+            header_row.setStyle(TableStyle([
+                ("VALIGN",        (0, 0), (-1, -1), "MIDDLE"),
+                ("LEFTPADDING",   (0, 0), (-1, -1), 8),
+                ("RIGHTPADDING",  (0, 0), (-1, -1), 8),
+                ("TOPPADDING",    (0, 0), (-1, -1), 6),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+                ("BACKGROUND",    (0, 0), (-1, -1), _hex(T["surface_alt"])),
+                ("LINEBELOW",     (0, 0), (-1, -1), 0.5, _hex(cwr_color)),
+            ]))
+            story.append(header_row)
+
+            # Rationale
+            if fc.get("rationale"):
+                story.append(Paragraph(fc["rationale"],
+                    _ps("FR", fontSize=9, textColor=_hex(T["text_secondary"]),
+                        leading=13, leftIndent=8, spaceAfter=4)))
+
+            # Metrics row
+            metrics = []
+            if fc.get("ai_score"):
+                metrics.append(("AI Score", str(fc["ai_score"]), cwr_color))
+            if fc.get("contain_display"):
+                metrics.append(("Containment", fc["contain_display"], T["green"]))
+            if fc.get("complexity"):
+                metrics.append(("Complexity", fc["complexity"], T["text_primary"]))
+            if fc.get("human_role"):
+                metrics.append(("Human Role", fc["human_role"], T["text_secondary"]))
+            if metrics:
+                story.append(_kpi_row(metrics))
+
+            # Human detail
+            if fc.get("human_detail"):
+                story.append(Paragraph(
+                    f"Agent: {fc['human_detail']}",
+                    _ps("HD", fontSize=8, textColor=_hex(T["text_muted"]),
+                        leading=12, leftIndent=8, spaceAfter=3, fontName=FONT_ITAL)))
+
+            # Intents, Channels, Data Sources, Output Actions
+            detail_rows = []
+            if fc.get("intents"):
+                detail_rows.append(("Common Intents", " - ".join(fc["intents"])))
+            if fc.get("entry_channels"):
+                detail_rows.append(("Channels", ", ".join(fc["entry_channels"])))
+            if fc.get("data_sources"):
+                detail_rows.append(("Data Sources", ", ".join(fc["data_sources"])))
+            if fc.get("output_actions"):
+                detail_rows.append(("Output Actions", ", ".join(fc["output_actions"])))
+            if fc.get("authentication"):
+                detail_rows.append(("Authentication", fc["authentication"]))
+            if detail_rows:
+                story.append(_info_table(detail_rows))
+
+            story.append(Spacer(1, 8))
+
+        story.append(PageBreak())
+
+    # ── PAGE 7: NEXT STEPS + FOOTER ─────────────────────────────
 
     story.append(Paragraph("RECOMMENDED NEXT STEPS", sec_s))
     if next_steps:

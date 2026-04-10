@@ -65,6 +65,29 @@ async def generate_blueprint(session_id: str):
         from blueprint_generator import generate_blueprint as _generate
         result = _generate()
 
+        # Enrich flow_cards with template data from scored_flows
+        try:
+            score_map = {
+                f.get('flow_id'): f
+                for f in (session.assessment or {}).get('scored_flows', [])
+            }
+            # Also build name lookup from scored flows
+            name_map = {
+                f.get('flow_name', '').lower(): f
+                for f in (session.assessment or {}).get('scored_flows', [])
+            }
+            for card in result.get('flow_cards', []):
+                scored = (score_map.get(card.get('flow_id')) or
+                          name_map.get(card.get('flow_name', '').lower()) or {})
+                for field in ['entry_channels', 'data_sources', 'human_role',
+                              'human_detail', 'intents', 'output_actions',
+                              'authentication', 'complexity', 'contain_display',
+                              'contain_label', 'rationale']:
+                    if not card.get(field) and scored.get(field):
+                        card[field] = scored[field]
+        except Exception as e:
+            print(f'[blueprint] Flow card enrichment failed: {e}')
+
         session.blueprint        = result
         session.phase_4_complete = True
         await save_session(session)

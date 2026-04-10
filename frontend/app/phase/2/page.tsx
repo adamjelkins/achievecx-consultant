@@ -418,93 +418,135 @@ function DetailPanel({ flow, onClose }: { flow: FlowData; onClose: () => void })
   const f = flow as any
   const hasAssessmentData = !!(f.cwr_label || f.rationale || f.ai_score)
 
+  const Tag = ({ label, color }: { label: string; color?: string }) => (
+    <span style={{
+      background: (color || COLORS.accent) + '18',
+      border: `1px solid ${(color || COLORS.accent)}33`,
+      borderRadius: 3, padding: '1px 6px',
+      fontSize: 10, color: color || COLORS.textMuted,
+    }}>{label}</span>
+  )
+
+  const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
+    <div style={{ flexShrink: 0 }}>
+      <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>{label}</div>
+      {children}
+    </div>
+  )
+
   return (
-    <div style={{ padding: '12px 16px' }}>
-      {/* Header row */}
+    <div style={{ padding: '10px 16px' }}>
+      {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.textPrimary }}>
-            {flow.flow_name}
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.textPrimary }}>{flow.flow_name}</div>
+          {f.category && (
+            <span style={{ fontSize: 10, color: COLORS.textDim, background: COLORS.surface2, border: `1px solid ${COLORS.border}`, borderRadius: 3, padding: '1px 6px' }}>{f.category}</span>
+          )}
           {f.cwr_label && (
-            <div style={{
-              display: 'inline-block',
-              background: f.cwr_color + '22',
-              border: `1px solid ${f.cwr_color}44`,
-              borderRadius: 4,
-              padding: '1px 8px',
-              fontSize: 10,
-              fontWeight: 700,
-              color: f.cwr_color,
-              letterSpacing: '0.06em',
-            }}>
-              {f.cwr_label}
-            </div>
+            <span style={{ fontSize: 10, fontWeight: 700, color: f.cwr_color, background: f.cwr_color + '18', border: `1px solid ${f.cwr_color}33`, borderRadius: 3, padding: '1px 6px', letterSpacing: '0.04em' }}>{f.cwr_label}</span>
           )}
         </div>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: COLORS.textDim, padding: 2 }}>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: COLORS.textDim, padding: 2, flexShrink: 0 }}>
           <X size={14} />
         </button>
       </div>
 
       {!hasAssessmentData ? (
-        <div style={{
-          fontSize: 11, color: COLORS.textDim, lineHeight: 1.5,
-          background: COLORS.surface2, border: `1px solid ${COLORS.border}`,
-          borderRadius: 6, padding: '8px 12px',
-        }}>
-          Run the AI Assessment to see automation potential, containment targets, and rationale for this flow.
+        // Pre-assessment
+        <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+          {f.entry_channels?.length > 0 && (
+            <Field label="Channels">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                {f.entry_channels.map((ch: string) => <Tag key={ch} label={`${CHANNEL_ICONS[ch] || ''} ${ch}`} />)}
+              </div>
+            </Field>
+          )}
+          {f.data_sources?.length > 0 && (
+            <Field label="Data Sources">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                {f.data_sources.map((ds: string) => <Tag key={ds} label={ds} />)}
+              </div>
+            </Field>
+          )}
+          {f.intents?.length > 0 && (
+            <Field label="Common Intents">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                {f.intents.map((intent: string) => <Tag key={intent} label={intent} color={COLORS.accent} />)}
+              </div>
+            </Field>
+          )}
+          <div style={{ fontSize: 11, color: COLORS.textDim, lineHeight: 1.5, width: '100%',
+            background: COLORS.surface2, border: `1px solid ${COLORS.border}`, borderRadius: 6, padding: '6px 10px' }}>
+            Run the AI Assessment to see automation potential and containment targets.
+          </div>
         </div>
       ) : (
-        // Post-assessment — horizontal layout
-        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+        // Post-assessment — full detail
+        <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+          {/* Rationale */}
           {f.rationale && (
             <div style={{ flex: '2 1 200px', fontSize: 11, color: COLORS.textMuted, lineHeight: 1.6 }}>
               {f.rationale}
             </div>
           )}
-          <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', flex: '1 1 auto' }}>
-            {f.contain_display && (
-              <div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Containment</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.green }}>{f.contain_display}</div>
+
+          {/* Key metrics */}
+          {f.contain_display && (
+            <Field label="Containment">
+              <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.green }}>{f.contain_display}</div>
+              {f.contain_label && <div style={{ fontSize: 9, color: COLORS.textDim }}>{f.contain_label}</div>}
+            </Field>
+          )}
+          {f.ai_score > 0 && (
+            <Field label="AI Score">
+              <div style={{ fontSize: 14, fontWeight: 700, color: f.cwr_color || COLORS.accent }}>{f.ai_score}</div>
+            </Field>
+          )}
+          {f.complexity && (
+            <Field label="Complexity">
+              <div style={{ fontSize: 11, color: COMPLEXITY_COLORS[f.complexity] || COLORS.textSec }}>{f.complexity}</div>
+            </Field>
+          )}
+          {f.human_role && (
+            <Field label="Human Role">
+              <div style={{ fontSize: 11, color: HR_COLORS[f.human_role] || COLORS.textSec }}>{f.human_role}</div>
+              {f.human_detail && <div style={{ fontSize: 10, color: COLORS.textDim, marginTop: 2, maxWidth: 180, lineHeight: 1.4 }}>{f.human_detail}</div>}
+            </Field>
+          )}
+          {f.intents?.length > 0 && (
+            <Field label="Common Intents">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                {f.intents.map((intent: string) => <Tag key={intent} label={intent} color={COLORS.accent} />)}
               </div>
-            )}
-            {f.human_role && (
-              <div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Human Role</div>
-                <div style={{ fontSize: 11, color: HR_COLORS[f.human_role] || COLORS.textSec }}>{f.human_role}</div>
+            </Field>
+          )}
+          {f.entry_channels?.length > 0 && (
+            <Field label="Channels">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                {f.entry_channels.map((ch: string) => <Tag key={ch} label={`${CHANNEL_ICONS[ch] || ''} ${ch}`} />)}
               </div>
-            )}
-            {f.complexity && (
-              <div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Complexity</div>
-                <div style={{ fontSize: 11, color: COMPLEXITY_COLORS[f.complexity] || COLORS.textSec }}>{f.complexity}</div>
+            </Field>
+          )}
+          {f.data_sources?.length > 0 && (
+            <Field label="Data Sources">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                {f.data_sources.map((ds: string) => <Tag key={ds} label={ds} />)}
               </div>
-            )}
-            {f.entry_channels?.length > 0 && (
-              <div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Channels</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-                  {f.entry_channels.map((ch: string) => (
-                    <span key={ch} style={{ background: COLORS.surface2, border: `1px solid ${COLORS.border}`, borderRadius: 3, padding: '1px 5px', fontSize: 10, color: COLORS.textMuted }}>
-                      {CHANNEL_ICONS[ch] || ''} {ch}
-                    </span>
-                  ))}
-                </div>
+            </Field>
+          )}
+          {f.output_actions?.length > 0 && (
+            <Field label="Output Actions">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                {f.output_actions.map((a: string) => <Tag key={a} label={a} color={COLORS.amber} />)}
               </div>
-            )}
-            {f.data_sources?.length > 0 && (
-              <div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: COLORS.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Data Sources</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-                  {f.data_sources.map((ds: string) => (
-                    <span key={ds} style={{ background: COLORS.surface2, border: `1px solid ${COLORS.border}`, borderRadius: 3, padding: '1px 5px', fontSize: 10, color: COLORS.textMuted }}>{ds}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+            </Field>
+          )}
+          {f.authentication && (
+            <Field label="Authentication">
+              <div style={{ fontSize: 10, color: COLORS.textMuted }}>{f.authentication}</div>
+            </Field>
+          )}
         </div>
       )}
     </div>

@@ -24,17 +24,7 @@ Crawl / Walk / Run:
 
 import json
 import os
-try:
-    import streamlit as st
-except ImportError:
-    import types, sys
-    st = types.ModuleType('streamlit')
-    st.session_state = types.SimpleNamespace()
-    st.spinner = lambda x: __import__('contextlib').nullcontext()
-    st.error = lambda x: None
-    st.warning = lambda x: None
-    st.info = lambda x: None
-    sys.modules['streamlit'] = st
+import streamlit as st
 from pathlib import Path
 from datetime import datetime
 
@@ -51,6 +41,23 @@ _client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # --------------------------------------------------
 
 # Automation potential by flow category (0-100)
+# Map template category names → scoring category keys
+CATEGORY_MAP = {
+    "Order Management":          "Orders",
+    "Billing":                   "Billing",
+    "Account Services":          "Account",
+    "Customer Care":             "Support",
+    "Technical Support":         "Support",
+    "Proactive Communications":  "Notifications",
+    "Scheduling":                "Scheduling",
+    "Healthcare":                "Healthcare",
+    "Sales Support":             "Sales",
+    "Customer Lifecycle":        "Sales",
+    "Authentication & Security": "Account",
+    "Field Service":             "Support",
+    "General":                   "Unknown",
+}
+
 CATEGORY_AUTOMATION = {
     "Orders":        88,
     "Notifications": 92,
@@ -128,8 +135,9 @@ def _score_flow(flow: dict, industry: str) -> dict:
     Score a single flow using the rules tables.
     Returns a scored flow dict.
     """
-    category = flow.get("category", "Unknown")
-    confidence = float(flow.get("confidence", 0.7))
+    raw_category = flow.get("category", "Unknown")
+    category     = CATEGORY_MAP.get(raw_category, raw_category)
+    confidence   = float(flow.get("confidence", 0.7))
 
     automation = CATEGORY_AUTOMATION.get(category, 60)
     volume     = CATEGORY_VOLUME.get(category, 60)

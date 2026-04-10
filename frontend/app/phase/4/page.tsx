@@ -443,29 +443,53 @@ function TabFlowDesigns({ bp }: { bp: any }) {
   const flow = flows[selected]
   const color = CWR_COLORS[flow?.crawl_walk_run] || '#818cf8'
 
+  const Tag = ({ label, c }: { label: string; c?: string }) => (
+    <span className="text-[10px] rounded px-1.5 py-0.5" style={{
+      background: (c || color) + '18',
+      border: `1px solid ${(c || color)}33`,
+      color: c || color,
+    }}>{label}</span>
+  )
+
+  const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
+    <div>
+      <div className="text-[10px] font-bold uppercase tracking-wider text-text-faint mb-1.5">{label}</div>
+      {children}
+    </div>
+  )
+
   return (
-    <div className="flex gap-4 h-full">
-      {/* Flow list */}
+    <div className="flex gap-4" style={{ minHeight: 400 }}>
+      {/* Flow list — CWR colored */}
       <div className="w-48 flex-shrink-0 space-y-1">
-        {flows.map((f: any, i: number) => (
-          <button key={i} onClick={() => setSelected(i)}
-            className="w-full text-left px-3 py-2 rounded-lg text-xs transition-all"
-            style={{
-              background: selected === i ? '#818cf822' : 'transparent',
-              border: `1px solid ${selected === i ? '#818cf844' : 'transparent'}`,
-              color: selected === i ? '#818cf8' : '#a0a0a0',
-            }}>
-            {f.flow_name}
-          </button>
-        ))}
+        {flows.map((f: any, i: number) => {
+          const fc = CWR_COLORS[f.crawl_walk_run] || '#818cf8'
+          const isSelected = selected === i
+          return (
+            <button key={i} onClick={() => setSelected(i)}
+              className="w-full text-left px-3 py-2 rounded-lg text-xs transition-all flex items-center gap-2"
+              style={{
+                background: isSelected ? fc + '15' : 'transparent',
+                border: `1px solid ${isSelected ? fc + '44' : 'transparent'}`,
+                borderLeft: `3px solid ${isSelected ? fc : 'transparent'}`,
+                color: isSelected ? fc : '#a0a0a0',
+              }}>
+              <span className="truncate">{f.flow_name}</span>
+            </button>
+          )
+        })}
       </div>
 
       {/* Flow detail */}
       {flow && (
-        <div className="flex-1 rounded-lg border border-border bg-bg-card p-5 space-y-4">
+        <div className="flex-1 rounded-lg border border-border bg-bg-card p-5 space-y-4 overflow-y-auto">
+          {/* Header */}
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <div className="text-base font-semibold text-text-primary">{flow.flow_name}</div>
+              {flow.category && (
+                <span className="text-[10px] text-text-dim bg-bg-surface border border-border rounded px-1.5 py-0.5">{flow.category}</span>
+              )}
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded"
                 style={{ color, background: color + '18', border: `1px solid ${color}33` }}>
                 {CWR_DISPLAY[flow.crawl_walk_run] || flow.crawl_walk_run}
@@ -476,49 +500,84 @@ function TabFlowDesigns({ bp }: { bp: any }) {
             )}
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          {/* Key metrics */}
+          <div className="grid grid-cols-4 gap-3">
             {flow.ai_score != null && (
-              <div>
-                <div className="text-[10px] text-text-dim mb-0.5">AI Score</div>
+              <div className="bg-bg rounded-lg border border-border p-3 text-center">
                 <div className="text-lg font-bold" style={{ color }}>{flow.ai_score}</div>
+                <div className="text-[10px] text-text-dim">AI Score</div>
               </div>
             )}
             {flow.contain_display && (
-              <div>
-                <div className="text-[10px] text-text-dim mb-0.5">Containment</div>
+              <div className="bg-bg rounded-lg border border-border p-3 text-center">
                 <div className="text-lg font-bold text-success">{flow.contain_display}</div>
+                <div className="text-[10px] text-text-dim">Containment</div>
+              </div>
+            )}
+            {flow.complexity && (
+              <div className="bg-bg rounded-lg border border-border p-3 text-center">
+                <div className="text-sm font-semibold text-text-secondary">{flow.complexity}</div>
+                <div className="text-[10px] text-text-dim">Complexity</div>
               </div>
             )}
             {flow.human_role && (
-              <div>
-                <div className="text-[10px] text-text-dim mb-0.5">Human Role</div>
-                <div className="text-sm text-text-secondary">{flow.human_role}</div>
+              <div className="bg-bg rounded-lg border border-border p-3 text-center">
+                <div className="text-sm font-semibold text-text-secondary">{flow.human_role}</div>
+                <div className="text-[10px] text-text-dim">Human Role</div>
               </div>
             )}
           </div>
 
-          {flow.entry_channels?.length > 0 && (
-            <div>
-              <div className="text-[10px] text-text-dim mb-1">Entry Channels</div>
-              <div className="flex flex-wrap gap-1.5">
-                {flow.entry_channels.map((ch: string) => (
-                  <span key={ch} className="text-[10px] bg-bg-surface border border-border
-                                             rounded px-1.5 py-0.5 text-text-muted">{ch}</span>
-                ))}
-              </div>
-            </div>
+          {/* Human role detail */}
+          {flow.human_detail && (
+            <Field label="Agent Responsibility">
+              <div className="text-xs text-text-muted leading-relaxed">{flow.human_detail}</div>
+            </Field>
           )}
 
-          {flow.data_sources?.length > 0 && (
-            <div>
-              <div className="text-[10px] text-text-dim mb-1">Data Sources</div>
+          {/* Intents */}
+          {flow.intents?.length > 0 && (
+            <Field label="Common Intents">
               <div className="flex flex-wrap gap-1.5">
-                {flow.data_sources.map((ds: string) => (
-                  <span key={ds} className="text-[10px] bg-bg-surface border border-border
-                                             rounded px-1.5 py-0.5 text-text-muted">{ds}</span>
-                ))}
+                {flow.intents.map((intent: string) => <Tag key={intent} label={intent} />)}
               </div>
-            </div>
+            </Field>
+          )}
+
+          {/* Channels, Data Sources, Output Actions */}
+          <div className="grid grid-cols-3 gap-4">
+            {flow.entry_channels?.length > 0 && (
+              <Field label="Channels">
+                <div className="flex flex-wrap gap-1.5">
+                  {flow.entry_channels.map((ch: string) => (
+                    <span key={ch} className="text-[10px] bg-bg-surface border border-border rounded px-1.5 py-0.5 text-text-muted">{ch}</span>
+                  ))}
+                </div>
+              </Field>
+            )}
+            {flow.data_sources?.length > 0 && (
+              <Field label="Data Sources">
+                <div className="flex flex-wrap gap-1.5">
+                  {flow.data_sources.map((ds: string) => (
+                    <span key={ds} className="text-[10px] bg-bg-surface border border-border rounded px-1.5 py-0.5 text-text-muted">{ds}</span>
+                  ))}
+                </div>
+              </Field>
+            )}
+            {flow.output_actions?.length > 0 && (
+              <Field label="Output Actions">
+                <div className="flex flex-wrap gap-1.5">
+                  {flow.output_actions.map((a: string) => <Tag key={a} label={a} c="#fbbf24" />)}
+                </div>
+              </Field>
+            )}
+          </div>
+
+          {/* Authentication */}
+          {flow.authentication && (
+            <Field label="Authentication">
+              <div className="text-xs text-text-muted">{flow.authentication}</div>
+            </Field>
           )}
         </div>
       )}

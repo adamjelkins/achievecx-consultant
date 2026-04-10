@@ -69,7 +69,7 @@ export default function IntakePage() {
 
       // Step 3 — pre-loading flows
       setLoadingStep(3)
-      await new Promise(r => setTimeout(r, 400))
+      await new Promise(r => setTimeout(r, 800))
 
       setBusinessProfile(result.business_profile)
       setDiscovery(result.suggested_flows)
@@ -216,8 +216,12 @@ export default function IntakePage() {
                 {LOADING_STEPS.map((step, i) => {
                   const done   = loadingStep > i + 1
                   const active = loadingStep === i + 1
+                  const pct    = done ? 100 : active ? 55 : 0
+                  const color  = done ? '#4ade80' : '#818cf8'
+
                   return (
                     <div key={i} className="flex items-center gap-3">
+                      {/* Icon — fixed width, no layout shift */}
                       <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
                         {done ? (
                           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -230,15 +234,28 @@ export default function IntakePage() {
                           <div className="w-3 h-3 rounded-full border border-border" />
                         )}
                       </div>
-                      <div>
+
+                      {/* Label — fixed width */}
+                      <div className="w-44 flex-shrink-0">
                         <div className={`text-sm font-medium transition-colors ${
                           done ? 'text-success' : active ? 'text-text-primary' : 'text-text-faint'
                         }`}>
                           {step.label}
                         </div>
-                        {active && (
-                          <div className="text-xs text-text-dim mt-0.5">{step.sub}</div>
-                        )}
+                      </div>
+
+                      {/* Progress bar — always rendered, just fills */}
+                      <div className="flex-1 h-1 bg-border rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-700"
+                          style={{ width: `${pct}%`, background: color }}
+                        />
+                      </div>
+
+                      {/* Status label — fixed width, no shift */}
+                      <div className="w-16 flex-shrink-0 text-right">
+                        {done && <span className="text-[10px] text-success">Done</span>}
+                        {active && <span className="text-[10px] text-accent animate-pulse">Working...</span>}
                       </div>
                     </div>
                   )
