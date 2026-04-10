@@ -19,7 +19,11 @@ def _mock_streamlit(session):
         st_mock.warning = lambda x: None
         st_mock.info    = lambda x: None
         sys.modules['streamlit'] = st_mock
-    import streamlit as st
+    try:
+        import streamlit as st
+    except ImportError:
+        import sys as _sys
+        st = _sys.modules['streamlit']
     if session:
         st.session_state.business_profile = session.business_profile
         st.session_state.discovery        = session.discovery
